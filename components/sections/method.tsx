@@ -4,8 +4,8 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { cn } from '@/lib/utils';
 
-// Register GSAP plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -31,31 +31,25 @@ const STEPS = [
   },
 ];
 
-/**
- * Method Card Component with 3D tilt and hover effects
- */
 interface MethodCardProps {
   step: (typeof STEPS)[0];
   index: number;
+  isActive: boolean;
 }
 
-function MethodCard({ step, index }: MethodCardProps) {
+function MethodCard({ step, index, isActive }: MethodCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
   const [tilt, setTilt] = useState({ rotateX: 0, rotateY: 0 });
 
   const handleMouseMove = (e: React.MouseEvent<HTMLDivElement>) => {
     if (!cardRef.current) return;
-
     const rect = cardRef.current.getBoundingClientRect();
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
-
-    // Calculate rotation based on mouse position
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * 5; // Max 5 degrees
-    const rotateY = ((centerX - x) / centerX) * 5; // Max 5 degrees
-
+    const rotateX = ((y - centerY) / centerY) * 5;
+    const rotateY = ((centerX - x) / centerX) * 5;
     setTilt({ rotateX, rotateY });
   };
 
@@ -64,284 +58,271 @@ function MethodCard({ step, index }: MethodCardProps) {
   };
 
   return (
-    <motion.div
+    <div
       ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      transition={{
-        duration: 0.8,
-        delay: index * 0.15,
-        ease: [0.25, 0.46, 0.45, 0.94],
-      }}
-      viewport={{ once: true, margin: '-100px' }}
-      whileHover={{
-        y: -8,
-        transition: { duration: 0.3 },
-      }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
-      className="group relative h-full"
-      style={{
-        perspective: '1000px',
-      }}
+      className="method-card relative h-full"
+      style={{ perspective: '1000px' }}
     >
       <motion.div
         animate={tilt}
         transition={{ type: 'spring', stiffness: 200, damping: 20 }}
-        style={{
-          transformStyle: 'preserve-3d' as const,
-        }}
-        className="relative h-full bg-surface/20 border border-white/5 rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:border-primary/40 hover:bg-surface/30 cursor-pointer shadow-2xl backdrop-blur-md"
+        style={{ transformStyle: 'preserve-3d' }}
+        className={cn(
+          "relative h-full border rounded-2xl p-8 overflow-hidden transition-all duration-500 cursor-pointer shadow-2xl backdrop-blur-md flex flex-col justify-between min-h-[320px]",
+          isActive
+            ? "bg-surface/40 border-primary/40 shadow-[0_0_50px_rgba(15,191,106,0.08)] scale-[1.02]"
+            : "bg-surface/20 border-white/5 hover:border-white/10"
+        )}
       >
-        {/* Large faded number watermark */}
         <div
-          className="absolute -top-10 -right-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"
+          className={cn(
+            "absolute -top-10 -right-10 font-bold font-space-grotesk pointer-events-none select-none transition-opacity duration-500",
+            isActive ? "opacity-[0.08]" : "opacity-[0.03]"
+          )}
           style={{
             fontSize: '240px',
             lineHeight: '1',
-            fontWeight: 'bold',
-            fontFamily: 'var(--font-space-grotesk)',
             color: 'var(--color-primary)',
-            userSelect: 'none',
-            pointerEvents: 'none',
             transform: 'translateZ(0)',
           }}
         >
           {step.number}
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 space-y-4 h-full flex flex-col">
-          {/* Step number and title */}
-          <div className="flex items-baseline gap-4">
-            <span className="text-4xl font-bold font-space-grotesk text-primary">
-              {step.number}
-            </span>
-            <h3 className="text-2xl font-bold font-space-grotesk text-foreground/90">
-              {step.title}
-            </h3>
+        <div className="relative z-10 space-y-6 flex-grow flex flex-col justify-between">
+          <div className="space-y-4">
+            <div className="flex items-center justify-between">
+              <div className="flex items-baseline gap-4">
+                <span className={cn(
+                  "text-4xl font-bold font-space-grotesk transition-colors duration-500",
+                  isActive ? "text-primary" : "text-primary/60"
+                )}>
+                  {step.number}
+                </span>
+                <h3 className={cn(
+                  "text-2xl font-bold font-space-grotesk transition-colors duration-500",
+                  isActive ? "text-primary" : "text-foreground/90"
+                )}>
+                  {step.title}
+                </h3>
+              </div>
+              <span className={cn(
+                "text-[10px] font-mono tracking-wider transition-opacity duration-500",
+                isActive ? "text-primary opacity-100" : "text-muted opacity-0"
+              )}>
+                // ACTIVE_PHASE
+              </span>
+            </div>
+
+            <p className="text-sm text-muted leading-relaxed font-normal">
+              {step.description}
+            </p>
           </div>
 
-          {/* Description */}
-          <p className="text-sm text-muted leading-relaxed flex-grow">
-            {step.description}
-          </p>
-
-          {/* Arrow indicator on hover */}
-          <div className="pt-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500">
+          <div className="pt-4 flex items-center justify-between">
+            <div className={cn(
+              "h-[1px] transition-all duration-700 origin-left flex-grow mr-4",
+              isActive ? "bg-primary scale-x-100 shadow-[0_0_8px_#0fbf6a]" : "bg-white/5 scale-x-50"
+            )} />
             <svg
-              className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-500"
+              className={cn(
+                "w-5 h-5 transform transition-all duration-500",
+                isActive ? "text-primary translate-x-1 opacity-100" : "text-muted opacity-30"
+              )}
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2.5}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M13 7l5 5m0 0l-5 5m5-5H6" />
             </svg>
           </div>
         </div>
-
-        {/* Hover glow effect */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-          style={{
-            boxShadow:
-              'inset 0 0 20px rgba(15, 191, 106, 0.08), 0 0 30px rgba(15, 191, 106, 0.03)',
-            background: 'radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.05) 0%, transparent 80%)',
-          }}
-        />
       </motion.div>
-    </motion.div>
+    </div>
   );
 }
 
-/**
- * Connecting Line Component with animated dot/arrow
- */
-function ConnectingLine() {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGCircleElement>(null);
-
-  useEffect(() => {
-    if (!svgRef.current || !pathRef.current || !dotRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Animate the line drawing with stroke-dashoffset
-      const path = pathRef.current;
-      const initialLength = path?.getTotalLength() || 0;
-
-      gsap.fromTo(
-        path,
-        { strokeDashoffset: initialLength },
-        {
-          strokeDashoffset: 0,
-          duration: 1.5,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: svgRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-
-      // Animate the dot along the path
-      gsap.to(
-        dotRef.current,
-        {
-          attr: {
-            cx: 600, // Endpoint of the line
-          },
-          duration: 1.5,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: svgRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    }, svgRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <svg
-      ref={svgRef}
-      className="absolute top-1/2 left-0 right-0 w-full h-20 pointer-events-none"
-      style={{
-        transform: 'translateY(-50%)',
-        overflow: 'visible',
-      }}
-      preserveAspectRatio="none"
-      viewBox="0 0 600 20"
-    >
-      {/* Main connecting line */}
-      <path
-        ref={pathRef}
-        d="M 0 10 L 600 10"
-        stroke="url(#lineGradient)"
-        strokeWidth="2"
-        fill="none"
-        strokeDasharray="600"
-        strokeDashoffset="600"
-      />
-
-      {/* Animated dot/circle */}
-      <circle
-        ref={dotRef}
-        cx="0"
-        cy="10"
-        r="4"
-        fill="var(--color-primary)"
-        filter="url(#dotGlow)"
-      />
-
-      {/* Arrow at the end */}
-      <defs>
-        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="rgba(15, 191, 106, 0)" />
-          <stop offset="50%" stopColor="rgba(15, 191, 106, 0.8)" />
-          <stop offset="100%" stopColor="rgba(15, 191, 106, 0.3)" />
-        </linearGradient>
-        <filter id="dotGlow">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-    </svg>
-  );
-}
-
-/**
- * Raxel Method Section Component
- */
 export function Method() {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const linePathRef = useRef<SVGPathElement>(null);
+  const lineGlowRef = useRef<SVGPathElement>(null);
+  const [activeStep, setActiveStep] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!sectionRef.current || !headlineRef.current) return;
+    if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Animate headline on scroll
-      gsap.fromTo(
-        headlineRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
+      if (headlineRef.current) {
+        gsap.fromTo(
+          headlineRef.current,
+          { opacity: 0, y: 30 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            ease: 'power3.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 75%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      if (containerRef.current) {
+        const cards = containerRef.current.querySelectorAll('.method-card');
+
+        gsap.fromTo(
+          cards,
+          { opacity: 0, y: 40 },
+          {
+            opacity: 1,
+            y: 0,
+            duration: 0.8,
+            stagger: 0.15,
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: containerRef.current,
+              start: 'top 70%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+
+        ScrollTrigger.create({
+          trigger: containerRef.current,
+          start: 'top 65%',
+          end: 'bottom 35%',
+          onUpdate: (self) => {
+            const p = self.progress;
+            if (p < 0.05 || p > 0.95) {
+              setActiveStep(null);
+            } else if (p >= 0.05 && p <= 0.35) {
+              setActiveStep(0);
+            } else if (p > 0.35 && p <= 0.70) {
+              setActiveStep(1);
+            } else if (p > 0.70 && p <= 0.95) {
+              setActiveStep(2);
+            }
           },
-        }
-      );
+          onLeave: () => setActiveStep(null),
+          onLeaveBack: () => setActiveStep(null),
+        });
+      }
+
+      if (linePathRef.current && lineGlowRef.current && containerRef.current) {
+        const length = linePathRef.current.getTotalLength();
+
+        gsap.set([linePathRef.current, lineGlowRef.current], {
+          strokeDasharray: length,
+          strokeDashoffset: length,
+        });
+
+        gsap.to([linePathRef.current, lineGlowRef.current], {
+          strokeDashoffset: 0,
+          ease: 'none',
+          scrollTrigger: {
+            trigger: containerRef.current,
+            start: 'top center',
+            end: 'bottom center',
+            scrub: 0.5,
+          },
+        });
+      }
     }, sectionRef);
 
-    return () => ctx.revert();
+    const handleScrollClear = () => {
+      if (!containerRef.current) return;
+      const rect = containerRef.current.getBoundingClientRect();
+      const viewHeight = window.innerHeight;
+
+      if (rect.top > viewHeight * 0.65 || rect.bottom < viewHeight * 0.35) {
+        setActiveStep(null);
+      }
+    };
+
+    window.addEventListener('scroll', handleScrollClear, { passive: true });
+
+    return () => {
+      ctx.revert();
+      window.removeEventListener('scroll', handleScrollClear);
+    };
   }, []);
 
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background"
+      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
     >
-      {/* Background accent */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 15% 70%, rgba(15, 191, 106, 0.08) 0%, transparent 50%)`,
+          background: `radial-gradient(circle at 15% 70%, rgba(15, 191, 106, 0.04) 0%, transparent 50%)`,
         }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-16 lg:mb-24">
-          <div className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">
+        <div ref={headlineRef} className="mb-16 lg:mb-24 space-y-3">
+          <div className="text-xs uppercase tracking-[0.2em] text-primary font-bold font-mono">
             THE RAXEL METHOD™
           </div>
-
-          <div ref={headlineRef} className="space-y-4">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-tight">
-              A Creative System Built On Data, Psychology, and Relentless Iteration.
-            </h2>
-          </div>
+          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-[1.15] tracking-tight max-w-4xl">
+            A Creative System Built On Data, Psychology, and Relentless Iteration.
+          </h2>
         </div>
 
-        {/* Cards Container */}
-        <div className="relative">
-          {/* Connecting line - Desktop only */}
-          <div className="hidden lg:block">
-            <ConnectingLine />
+        <div ref={containerRef} className="relative">
+          <div className="hidden lg:block absolute top-[52px] left-0 right-0 w-full pointer-events-none z-0 px-12">
+            <svg className="w-full h-[4px]" fill="none" preserveAspectRatio="none" viewBox="0 0 100 4">
+              <path d="M 0 2 L 100 2" stroke="rgba(255,255,255,0.05)" strokeWidth="2" />
+              <path
+                ref={linePathRef}
+                d="M 0 2 L 100 2"
+                stroke="url(#methodLineGradient)"
+                strokeWidth="2"
+                vectorEffect="non-scaling-stroke"
+              />
+              <path
+                ref={lineGlowRef}
+                d="M 0 2 L 100 2"
+                stroke="var(--color-primary)"
+                strokeWidth="2"
+                opacity="0.5"
+                vectorEffect="non-scaling-stroke"
+                style={{ filter: 'drop-shadow(0px 0px 4px #0fbf6a)' }}
+              />
+              <defs>
+                <linearGradient id="methodLineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+                  <stop offset="0%" stopColor="rgba(15, 191, 106, 0.2)" />
+                  <stop offset="50%" stopColor="rgba(15, 191, 106, 1)" />
+                  <stop offset="100%" stopColor="rgba(15, 191, 106, 0.4)" />
+                </linearGradient>
+              </defs>
+            </svg>
           </div>
 
-          {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12 relative z-10 items-stretch">
             {STEPS.map((step, index) => (
-              <MethodCard key={step.number} step={step} index={index} />
+              <MethodCard
+                key={step.number}
+                step={step}
+                index={index}
+                isActive={activeStep === index}
+              />
             ))}
           </div>
         </div>
       </div>
 
-      {/* Grain texture */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-20"
+        className="absolute inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }}
       />
     </section>

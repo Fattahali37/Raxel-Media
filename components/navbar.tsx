@@ -4,6 +4,7 @@ import { useState, useEffect } from 'react';
 import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { Logo } from '@/components/logo';
 
 interface NavLink {
   href: string;
@@ -34,11 +35,11 @@ export function Navbar() {
   }, [mobileMenuOpen]);
 
   const navLinks: NavLink[] = [
-    { href: '#', label: 'Home' },
-    { href: '#', label: 'Services' },
-    { href: '#', label: 'Work' },
-    { href: '#', label: 'Process' },
-    { href: '#', label: 'FAQ' },
+    { href: '#home', label: 'Home' },
+    { href: '#services', label: 'Services' },
+    // { href: '#', label: 'Work' },
+    { href: '#process', label: 'Process' },
+    { href: '#faq', label: 'FAQ' },
   ];
 
   const containerVariants = {
@@ -99,11 +100,8 @@ export function Navbar() {
                 href="/"
                 className="text-xl md:text-2xl font-bold text-foreground font-space-grotesk"
               >
-                RAXEL
+                <Logo />
               </a>
-              <span className="text-xs md:text-sm text-muted font-inter">
-                MEDIA
-              </span>
             </motion.div>
 
             {/* Desktop Navigation */}

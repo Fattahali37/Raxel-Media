@@ -25,7 +25,7 @@ interface StatCounterProps {
 }
 
 function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCounterProps) {
-  const ref = useRef(null);
+  const ref = useRef<HTMLDivElement>(null);
   const isInView = useInView(ref, { once: true, margin: '-100px' });
   const [displayValue, setDisplayValue] = useState('0');
 
@@ -72,7 +72,7 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
         {displayValue}
         {suffix}
       </div>
-      <p className="text-sm text-muted uppercase letter-spacing-wide font-medium">
+      <p className="text-sm text-muted uppercase tracking-wide font-medium">
         {label}
       </p>
     </div>
@@ -82,63 +82,80 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
 /**
  * Marquee Component with infinite scroll and fade edges
  */
+/**
+ * Marquee Component with seamless infinite scroll and fade edges
+ */
 function Marquee() {
-  const marqueeContent = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS]; // Duplicate for seamless loop
+  // Triple the items or ensure they easily exceed 100vw total width
+  const marqueeContent = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
     <div className="relative w-full overflow-hidden py-6">
       {/* Fade left edge */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+        className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgba(10, 10, 10, 1), rgba(10, 10, 10, 0))',
+            'linear-gradient(to right, rgb(10, 10, 10), rgba(10, 10, 10, 0))',
         }}
       />
 
       {/* Fade right edge */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-20 z-10 pointer-events-none"
+        className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to left, rgba(10, 10, 10, 1), rgba(10, 10, 10, 0))',
+            'linear-gradient(to left, rgb(10, 10, 10), rgba(10, 10, 10, 0))',
         }}
       />
 
-      {/* Scrolling content */}
-      <motion.div
-        className="flex gap-12 whitespace-nowrap"
-        animate={{ x: ['0%', '-50%'] }}
-        transition={{
-          duration: 30,
-          repeat: Infinity,
-          ease: 'linear',
-        }}
-      >
-        {marqueeContent.map((item, index) => (
-          <div
-            key={index}
-            className="flex items-center gap-4 text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
-          >
-            <span>{item}</span>
-            {index < marqueeContent.length - 1 && (
+      {/* Inner container establishing a non-restrictive layout */}
+      <div className="flex w-max">
+        {/* Animated track moving exactly by half its overall width */}
+        <motion.div
+          className="flex gap-16 pr-16 whitespace-nowrap motion-reduce:transform-none"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{
+            duration: 25, // Slightly faster for a cleaner glide
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        >
+          {marqueeContent.map((item, index) => (
+            <div
+              key={index}
+              className="flex items-center gap-4 text-xs sm:text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
+            >
+              <span>{item}</span>
               <span className="text-primary text-xs">{DIVIDER}</span>
-            )}
-          </div>
-        ))}
-      </motion.div>
+            </div>
+          ))}
+        </motion.div>
 
-      <style jsx>{`
-        @media (prefers-reduced-motion: reduce) {
-          div {
-            animation: none;
-          }
-        }
-      `}</style>
+        {/* Duplicate track to seamlessly append right behind the first one */}
+        <motion.div
+          className="flex gap-16 pr-16 whitespace-nowrap motion-reduce:transform-none"
+          animate={{ x: ['0%', '-50%'] }}
+          transition={{
+            duration: 25,
+            repeat: Infinity,
+            ease: 'linear',
+          }}
+        >
+          {marqueeContent.map((item, index) => (
+            <div
+              key={`dup-${index}`}
+              className="flex items-center gap-4 text-xs sm:text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
+            >
+              <span>{item}</span>
+              <span className="text-primary text-xs">{DIVIDER}</span>
+            </div>
+          ))}
+        </motion.div>
+      </div>
     </div>
   );
 }
-
 /**
  * Stats Grid Component with animated counters
  */
@@ -199,24 +216,6 @@ export function TrustBar() {
           <StatsGrid />
         </div>
       </div>
-
-      {/* Subtle grain texture for consistency */}
-      <style jsx>{`
-        @keyframes marquee {
-          0% {
-            transform: translateX(0);
-          }
-          100% {
-            transform: translateX(-50%);
-          }
-        }
-
-        @media (prefers-reduced-motion: reduce) {
-          section {
-            animation: none;
-          }
-        }
-      `}</style>
     </section>
   );
 }

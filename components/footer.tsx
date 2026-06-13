@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useRef } from 'react';
+import { FooterLogo } from '@/components/footer-logo';
 
 /**
  * Footer Component
@@ -54,9 +55,7 @@ export function Footer() {
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
             {/* Column 1: Logo & Tagline */}
             <div data-fade-in className="space-y-4 opacity-0">
-              <div className="font-bold font-space-grotesk text-2xl text-foreground">
-                RAXEL
-              </div>
+              <FooterLogo />
               <p className="text-sm text-muted leading-relaxed">
                 Creative That Converts
               </p>
@@ -84,7 +83,7 @@ export function Footer() {
             </div>
 
             {/* Column 3: Connect */}
-            <div data-fade-in className="space-y-4 opacity-0">
+            {/* <div data-fade-in className="space-y-4 opacity-0">
               <h4 className="font-semibold font-space-grotesk text-foreground text-sm uppercase tracking-widest">
                 Connect
               </h4>
@@ -117,7 +116,7 @@ export function Footer() {
                   X
                 </a>
               </div>
-            </div>
+            </div> */}
 
             {/* Column 4: Contact */}
             <div data-fade-in className="space-y-4 opacity-0">

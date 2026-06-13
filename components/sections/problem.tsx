@@ -3,174 +3,136 @@
 import { useEffect, useRef } from 'react';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { X } from 'lucide-react';
 
-// Register GSAP plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
 
-/**
- * Glitched Ad Card Component
- * Represents a generic/poor-quality ad with RGB glitch effect
- */
-function GlitchedAdCard() {
+function BudgetVisualizer() {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const pulseRef = useRef<HTMLDivElement>(null);
+  const matrixRef = useRef<HTMLDivElement>(null);
+  const textLockRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!containerRef.current) return;
+
+    const lines = containerRef.current.querySelectorAll('.noise-line');
+    gsap.fromTo(
+      lines,
+      { y: 40, opacity: 0.1 },
+      {
+        y: -40,
+        opacity: (i) => [0.7, 0.4, 0.8, 0.3][i % 4],
+        duration: (i) => 2 + (i % 3),
+        repeat: -1,
+        yoyo: true,
+        stagger: 0.2,
+        ease: 'sine.inOut',
+      }
+    );
+
+    if (pulseRef.current) {
+      gsap.fromTo(
+        pulseRef.current,
+        { top: '0%' },
+        {
+          top: '100%',
+          duration: 4,
+          repeat: -1,
+          ease: 'power1.inOut',
+          yoyo: true,
+        }
+      );
+    }
+
+    if (matrixRef.current) {
+      gsap.to(matrixRef.current, {
+        rotation: 360,
+        duration: 30,
+        repeat: -1,
+        ease: 'none',
+      });
+    }
+
+    if (textLockRef.current) {
+      gsap.to(textLockRef.current, {
+        rotation: -360,
+        duration: 30,
+        repeat: -1,
+        ease: 'none',
+      });
+    }
+  }, []);
+
   return (
-    <div className="relative w-72 h-96 group">
-      {/* Background red glow aura */}
-      <div className="absolute -inset-4 bg-red-500/5 rounded-2xl blur-3xl group-hover:bg-red-500/10 transition-all duration-500 pointer-events-none z-0" />
+    <div ref={containerRef} className="relative w-full max-w-[440px] h-[440px] flex items-center justify-center">
+      <div className="absolute inset-0 rounded-full border border-dashed border-border/20 animate-[spin_80s_linear_infinite]" />
+      <div className="absolute inset-12 rounded-full border border-border/40 animate-[spin_40s_linear_infinite_reverse]" />
 
-      {/* Main card */}
-      <div
-        className="absolute inset-0 bg-surface/80 border border-border/80 rounded-xl overflow-hidden shadow-2xl backdrop-blur-sm z-10"
-        style={{
-          transform: 'rotate(-4deg)',
-          filter: 'blur(0.5px) saturate(0.9)',
-        }}
-      >
-        {/* Card header */}
-        <div className="h-44 bg-gradient-to-br from-surface to-surface/40 flex items-center justify-center border-b border-border/40">
-          <div className="text-center p-4">
-            <div className="w-10 h-10 bg-muted/10 rounded-full mx-auto mb-3 flex items-center justify-center text-muted/50 text-xs font-semibold border border-white/5">
-              IMG
-            </div>
-            <p className="text-[10px] text-muted/50 uppercase tracking-widest font-semibold">Generic product image</p>
-          </div>
-        </div>
+      <div className="absolute w-72 h-72 bg-primary/10 rounded-full blur-3xl mix-blend-screen animate-pulse" />
+      <div className="absolute w-60 h-60 bg-red-500/5 rounded-full blur-2xl translate-x-12 -translate-y-6" />
 
-        {/* Card content */}
-        <div className="p-5 space-y-3">
-          <p className="text-sm font-semibold text-foreground/90 tracking-tight leading-snug line-clamp-2">
-            🚨 Click Here for Amazing Offer! 🚨
-          </p>
-          <p className="text-xs text-muted/60 leading-relaxed line-clamp-3">
-            This is the same hook everyone uses. Boring. Ineffective. Ignored by modern consumers.
-          </p>
+      <div ref={matrixRef} className="relative w-72 h-72 flex items-center justify-center">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary shadow-[0_0_12px_#0fbf6a]" />
+        <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-3 h-3 rounded-full bg-primary/40" />
+        <div className="absolute left-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary/40" />
+        <div className="absolute right-0 top-1/2 -translate-y-1/2 w-3 h-3 rounded-full bg-primary shadow-[0_0_12px_#0fbf6a]" />
 
-          {/* CTA button - looks generic */}
-          <div className="pt-2">
-            <button
-              className="w-full py-2 bg-muted/10 text-muted/40 text-[10px] font-bold tracking-widest uppercase rounded border border-border/60 cursor-not-allowed opacity-60"
-              disabled
-            >
-              Learn More
-            </button>
+        <div ref={textLockRef} className="w-40 h-40 flex items-center justify-center">
+          <div className="w-full h-full bg-surface/40 border border-primary/20 backdrop-blur-md rounded-xl flex flex-col items-center justify-center p-4 text-center group transition-colors duration-500 hover:border-primary/40">
+            <span className="text-[10px] uppercase font-mono tracking-[0.25em] text-muted mb-1">Creative Matrix</span>
+            <span className="text-2xl font-bold font-space-grotesk text-foreground tracking-tight">94.2%</span>
+            <div className="w-16 h-[2px] bg-primary mt-2 shadow-[0_0_8px_#0fbf6a]" />
+            <span className="text-[9px] font-mono uppercase tracking-widest text-primary mt-3 opacity-80">STABLE STRUCTURE</span>
           </div>
         </div>
       </div>
 
-      {/* RGB glitch effect layers */}
-      <div
-        className="absolute inset-0 border border-red-500/30 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20"
-        style={{
-          transform: 'rotate(-4deg) translate(2px, 0)',
-          mixBlendMode: 'multiply',
-        }}
-      />
-      <div
-        className="absolute inset-0 border border-blue-500/30 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20"
-        style={{
-          transform: 'rotate(-4deg) translate(-2px, 0)',
-          mixBlendMode: 'screen',
-        }}
-      />
+      <div className="noise-line absolute top-12 left-6 border border-red-500/30 bg-background/80 px-3 py-1.5 rounded-md font-mono text-[10px] text-red-400 flex items-center gap-2 backdrop-blur-sm">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-ping" />
+        BUDGET_BLEED // UNOPTIMIZED_HOOK
+      </div>
 
-      {/* Animated style tag for glitch */}
-      <style jsx>{`
-        @keyframes glitch-shift {
-          0% {
-            transform: rotate(-4deg) translate(0, 0);
-            opacity: 0;
-          }
-          50% {
-            opacity: 0.5;
-          }
-          100% {
-            transform: rotate(-4deg) translate(3px, 2px);
-            opacity: 0;
-          }
-        }
+      <div className="noise-line absolute bottom-16 -left-4 border border-red-500/20 bg-background/80 px-3 py-1.5 rounded-md font-mono text-[10px] text-red-400/80 flex items-center gap-2 backdrop-blur-sm">
+        <span className="w-1.5 h-1.5 rounded-full bg-red-400 animate-ping" />0x0F4A STOCK_FOOTAGE_DETECTED
+      </div>
 
-        div:hover {
-          animation: glitch-shift 0.3s infinite;
-        }
-      `}</style>
-    </div>
-  );
-}
+      <div className="noise-line absolute top-1/4 -right-8 border border-primary/30 bg-background/90 px-3 py-1.5 rounded-md font-mono text-[10px] text-primary flex items-center gap-2 shadow-[0_4px_12px_rgba(0,0,0,0.5)] backdrop-blur-sm">
+        <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
+        ENG_PATTERN_INTERRUPT
+      </div>
 
-/**
- * Rejected Ad Cards Component
- * Stack of rejected/crossed-out ad cards
- */
-function RejectedAdCards() {
-  const cards = [
-    { label: 'Stock footage hook', rotation: -8 },
-    { label: 'Generic call-to-action', rotation: 4 },
-    { label: 'No pattern interrupt', rotation: -3 },
-  ];
+      <div className="noise-line absolute bottom-12 right-4 border border-primary/30 bg-primary/10 px-3 py-1.5 rounded-md font-mono text-[10px] text-primary flex items-center gap-2 backdrop-blur-sm shadow-[0_0_15px_rgba(15,191,106,0.1)]">
+        <span className="w-1 h-1 rounded-full bg-primary animate-ping" />
+        PSYCHOLOGY_MAPPED_OK
+      </div>
 
-  return (
-    <div className="relative w-72 h-64">
-      {cards.map((card, index) => (
+      <div className="absolute inset-y-4 inset-x-12 pointer-events-none border-x border-border/10">
         <div
-          key={index}
-          className="absolute w-64 h-28 bg-surface/60 border border-white/5 rounded-xl p-4 flex items-center justify-between shadow-xl backdrop-blur-md transition-all duration-300 hover:border-red-500/30"
-          style={{
-            transform: `rotate(${card.rotation}deg) translateX(${index * 20}px) translateY(${index * 30}px)`,
-            opacity: 0.9 - index * 0.15,
-            zIndex: cards.length - index,
-          }}
-          data-rotation={card.rotation}
-          ref={(el) => {
-            if (el) {
-              el.dataset.cardindex = index.toString();
-            }
-          }}
-        >
-          {/* Card content */}
-          <div className="flex-1 space-y-1">
-            <p className="text-[10px] text-red-500/80 uppercase tracking-widest font-semibold">
-              Rejected
-            </p>
-            <p className="text-sm text-foreground/90 font-semibold tracking-tight line-clamp-1">
-              {card.label}
-            </p>
-          </div>
-
-          {/* Red X icon */}
-          <div className="ml-4 flex-shrink-0">
-            <div className="relative">
-              <X className="w-5 h-5 text-red-500/80" strokeWidth={3} />
-              <div className="absolute inset-0 bg-red-500/20 blur-md rounded-full" />
-            </div>
-          </div>
-        </div>
-      ))}
+          ref={pulseRef}
+          className="absolute left-0 right-0 h-[1px] bg-gradient-to-r from-transparent via-primary/50 to-transparent shadow-[0_0_10px_rgba(15,191,106,0.8)]"
+        />
+      </div>
     </div>
   );
 }
 
-/**
- * Problem/Agitation Section Component
- */
 export function Problem() {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
   const bodyRef = useRef<HTMLDivElement>(null);
   const closingRef = useRef<HTMLDivElement>(null);
-  const visualRef = useRef<HTMLDivElement>(null);
-  const rejectedCardsRef = useRef<HTMLDivElement>(null);
+  const visualWrapperRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!sectionRef.current) return;
 
     const ctx = gsap.context(() => {
-      // Headline stagger animation
       if (headlineRef.current) {
         gsap.fromTo(
           headlineRef.current.querySelectorAll('span'),
-          { opacity: 0, x: -60 },
+          { opacity: 0, x: -40 },
           {
             opacity: 1,
             x: 0,
@@ -179,14 +141,13 @@ export function Problem() {
             ease: 'power3.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 60%',
+              start: 'top 65%',
               toggleActions: 'play none none reverse',
             },
           }
         );
       }
 
-      // Body fade-in
       if (bodyRef.current) {
         gsap.fromTo(
           bodyRef.current,
@@ -195,105 +156,46 @@ export function Problem() {
             opacity: 1,
             y: 0,
             duration: 0.8,
-            delay: 0.3,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 60%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-      }
-
-      // Closing line scale and glow pulse
-      if (closingRef.current) {
-        gsap.fromTo(
-          closingRef.current,
-          { opacity: 0, scale: 0.8 },
-          {
-            opacity: 1,
-            scale: 1,
-            duration: 0.8,
-            delay: 0.6,
-            ease: 'back.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 60%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-
-        // Glow pulse animation on the text
-        const glowEl = closingRef.current.querySelector('.glow-text');
-        if (glowEl) {
-          gsap.to(glowEl, {
-            textShadow:
-              '0 0 20px rgba(15, 191, 106, 0.5), 0 0 40px rgba(15, 191, 106, 0.3)',
-            duration: 2,
-            repeat: -1,
-            yoyo: true,
-            delay: 1,
-          });
-        }
-      }
-
-      // Glitched card animation (main visual)
-      if (visualRef.current) {
-        gsap.fromTo(
-          visualRef.current,
-          { opacity: 0, x: 100, rotation: -4 },
-          {
-            opacity: 1,
-            x: 0,
-            rotation: -4,
-            duration: 1,
             delay: 0.2,
             ease: 'power3.out',
             scrollTrigger: {
               trigger: sectionRef.current,
-              start: 'top 60%',
+              start: 'top 65%',
               toggleActions: 'play none none reverse',
-            },
-            onComplete: () => {
-              // Subtle continuous rotation for visual interest, starts only
-              // after the entrance animation settles so it never fights it
-              gsap.to(visualRef.current, {
-                rotation: -2,
-                duration: 3,
-                yoyo: true,
-                repeat: -1,
-                ease: 'sine.inOut',
-              });
             },
           }
         );
       }
 
-      // Rejected cards staggered scatter entrance
-      if (rejectedCardsRef.current) {
-        const cards = rejectedCardsRef.current.querySelectorAll('[data-cardindex]');
+      if (closingRef.current) {
         gsap.fromTo(
-          cards,
+          closingRef.current,
+          { opacity: 0, scale: 0.95 },
           {
-            opacity: 0,
-            x: (i: number) => (i % 2 === 0 ? -100 : 100),
-            y: 50,
-            rotation: (i: number) => i * 10,
-          },
-          {
-            opacity: (i: number) => 0.9 - i * 0.15,
-            x: (i: number) => i * 20,
-            y: (i: number) => i * 30,
-            rotation: (i: number) => {
-              const card = cards[i] as HTMLElement;
-              return parseFloat(card.getAttribute('data-rotation') || '0');
-            },
+            opacity: 1,
+            scale: 1,
             duration: 0.8,
-            stagger: 0.15,
             delay: 0.4,
-            ease: 'back.out',
+            ease: 'power2.out',
+            scrollTrigger: {
+              trigger: sectionRef.current,
+              start: 'top 65%',
+              toggleActions: 'play none none reverse',
+            },
+          }
+        );
+      }
+
+      if (visualWrapperRef.current) {
+        gsap.fromTo(
+          visualWrapperRef.current,
+          { opacity: 0, scale: 0.9, rotate: 5 },
+          {
+            opacity: 1,
+            scale: 1,
+            rotate: 0,
+            duration: 1.2,
+            ease: 'power4.out',
             scrollTrigger: {
               trigger: sectionRef.current,
               start: 'top 60%',
@@ -310,31 +212,25 @@ export function Problem() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden"
-      style={{
-        backgroundColor: 'rgba(18, 18, 18, 0.5)',
-      }}
+      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden border-b border-border/30"
     >
-      {/* Background accent */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 85% 30%, rgba(15, 191, 106, 0.08) 0%, transparent 50%)`,
+          background: `radial-gradient(circle at 80% 40%, rgba(15, 191, 106, 0.05) 0%, transparent 60%)`,
         }}
       />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8 lg:gap-16 items-center">
-          {/* Left side - text content (~55%) */}
-          <div className="lg:col-span-6 space-y-8">
-            {/* Eyebrow */}
-            <div className="text-xs uppercase tracking-widest text-primary font-semibold">
-              THE PROBLEM
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-16 items-center">
+
+          <div className="lg:col-span-7 space-y-8">
+            <div className="text-xs uppercase tracking-[0.2em] text-primary font-bold font-mono">
+              The Problem
             </div>
 
-            {/* Headline with stagger */}
-            <div ref={headlineRef} className="space-y-2">
-              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk leading-tight text-foreground">
+            <div ref={headlineRef}>
+              <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk leading-[1.1] text-foreground tracking-tight">
                 <span className="block">Your Ads Are</span>
                 <span className="block">Bleeding Budget —</span>
                 <span className="block text-primary">And You Don&apos;t Even</span>
@@ -342,65 +238,40 @@ export function Problem() {
               </h2>
             </div>
 
-            {/* Body text */}
-            <div ref={bodyRef} className="space-y-6 text-lg text-muted leading-relaxed max-w-lg">
+            <div ref={bodyRef} className="space-y-6 text-base sm:text-lg text-muted leading-relaxed max-w-xl">
               <p>
                 Most brands are stuck running the same tired creative — generic hooks, stock-footage
                 vibes, and scripts that say everything and convince no one. Meanwhile, your
                 competitors are testing 10 new angles a week and stealing your customers.
               </p>
 
-              {/* Closing punchy line with green accent */}
               <div
                 ref={closingRef}
-                className="pt-6 border-t border-border/50"
+                className="pt-6 mt-6 border-t border-border/40"
               >
-                <p className="text-xl lg:text-2xl font-bold font-space-grotesk text-foreground leading-snug">
+                <p className="text-lg sm:text-xl font-bold font-space-grotesk text-foreground leading-snug">
                   If your creative isn&apos;t engineered around{' '}
-                  <span className="glow-text text-primary">psychology, pain points,</span> and
+                  <span className="text-primary underline decoration-primary/30 underline-offset-4">psychology, pain points,</span> and
                   pattern interrupts — it&apos;s not an ad. It&apos;s{' '}
-                  <span className="text-red-500/80">noise.</span>
+                  <span className="text-red-500 font-semibold px-1.5 py-0.5 rounded bg-red-500/10 border border-red-500/20 text-base font-mono uppercase tracking-wide">Noise.</span>
                 </p>
               </div>
             </div>
           </div>
 
-          {/* Right side - visual elements (~45%) */}
-          <div className="lg:col-span-6 flex justify-center items-center min-h-[500px]">
-            <div className="relative w-full max-w-[480px] h-[480px]">
-              {/* Rejected cards stack — bottom-left, behind main card */}
-              <div
-                ref={rejectedCardsRef}
-                className="absolute z-10"
-                style={{
-                  left: '0px',
-                  bottom: '0px',
-                }}
-              >
-                <RejectedAdCards />
-              </div>
-
-              {/* Main glitched card — top-right, in front */}
-              <div
-                ref={visualRef}
-                className="absolute z-20"
-                style={{
-                  right: '0px',
-                  top: '0px',
-                }}
-              >
-                <GlitchedAdCard />
-              </div>
+          <div className="lg:col-span-5 flex justify-center items-center min-h-[460px]">
+            <div ref={visualWrapperRef} className="relative w-full flex justify-center items-center">
+              <BudgetVisualizer />
             </div>
           </div>
+
         </div>
       </div>
 
-      {/* Grain texture overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-20"
+        className="absolute inset-0 pointer-events-none opacity-[0.03] mix-blend-overlay"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
         }}
       />
     </section>
