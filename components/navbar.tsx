@@ -1,9 +1,8 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
+import { motion, useScroll, useMotionValueEvent } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
-import { useScroll } from 'framer-motion';
 import { cn } from '@/lib/utils';
 
 interface NavLink {
@@ -17,13 +16,9 @@ export function Navbar() {
   const { scrollY } = useScroll();
 
   // Track scroll position for background change
-  useEffect(() => {
-    const unsubscribe = scrollY.onChange((value: number) => {
-      setHasScrolled(value > 50);
-    });
-
-    return () => unsubscribe();
-  }, [scrollY]);
+  useMotionValueEvent(scrollY, 'change', (latest) => {
+    setHasScrolled(latest > 50);
+  });
 
   // Lock body scroll when mobile menu is open
   useEffect(() => {
@@ -64,6 +59,16 @@ export function Navbar() {
       y: 0,
       transition: { duration: 0.5 },
     },
+  };
+
+  const linkVariants = {
+    initial: { color: '#F5F5F5' },
+    hover: { color: '#0FBF6A' },
+  };
+
+  const underlineVariants = {
+    initial: { width: 0, translateX: '-50%' },
+    hover: { width: '100%', translateX: '-50%' },
   };
 
   return (
@@ -108,15 +113,15 @@ export function Navbar() {
                   <motion.a
                     href={link.href}
                     className="relative text-foreground font-inter text-sm"
-                    whileHover={{ color: '#0FBF6A' }}
-                    transition={{ duration: 0.2 }}
+                    initial="initial"
+                    whileHover="hover"
+                    variants={linkVariants}
                   >
                     {link.label}
                     {/* Underline grow from center effect */}
                     <motion.div
                       className="absolute bottom-0 left-1/2 h-px bg-primary"
-                      initial={{ width: 0, translateX: '-50%' }}
-                      whileHover={{ width: '100%' }}
+                      variants={underlineVariants}
                       transition={{ duration: 0.3 }}
                     />
                   </motion.a>

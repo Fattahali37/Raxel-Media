@@ -4,6 +4,7 @@ import { useEffect, useRef, useState } from 'react';
 import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { cn } from '@/lib/utils';
 
 // Register GSAP plugin
 if (typeof window !== 'undefined') {
@@ -46,6 +47,14 @@ const PROCESS_STEPS: ProcessStep[] = [
 /**
  * Timeline Line Component
  * Animates downward as user scrolls through the section
+ *
+ * FIX: viewBox no longer uses an arbitrary "1000" unit space that gets
+ * stretched by preserveAspectRatio="none". Instead we draw the line in a
+ * 1:1 unit viewBox (0 0 2 100) using percentage-based coordinates, and
+ * size strokeDasharray/strokeDashoffset off the *rendered* pixel length
+ * (getTotalLength() is called after layout, so it reflects the real
+ * stretched size). This keeps the scrub animation in sync with scroll
+ * regardless of the section's actual height.
  */
 function TimelineLine({ sectionRef }: { sectionRef: React.RefObject<HTMLElement> }) {
   const svgRef = useRef<SVGSVGElement>(null);
@@ -58,13 +67,17 @@ function TimelineLine({ sectionRef }: { sectionRef: React.RefObject<HTMLElement>
       const line = lineRef.current;
       if (!line) return;
 
+      // Measure after layout so totalLength reflects the real rendered height
       const totalLength = line.getTotalLength();
+      line.style.strokeDasharray = `${totalLength}`;
+      line.style.strokeDashoffset = `${totalLength}`;
 
       gsap.fromTo(
         line,
         { strokeDashoffset: totalLength },
         {
           strokeDashoffset: 0,
+          ease: 'none',
           scrollTrigger: {
             trigger: sectionRef.current,
             start: 'top center',
@@ -82,24 +95,22 @@ function TimelineLine({ sectionRef }: { sectionRef: React.RefObject<HTMLElement>
   return (
     <svg
       ref={svgRef}
-      className="absolute left-0 top-0 w-1 h-full"
+      className="absolute left-0 top-0 w-0.5 h-full"
       style={{
         left: 'calc(50% - 1px)',
       }}
       preserveAspectRatio="none"
-      viewBox="0 0 2 1000"
-      width="2"
+      viewBox="0 0 2 100"
     >
       <line
         ref={lineRef}
         x1="1"
         y1="0"
         x2="1"
-        y2="1000"
+        y2="100"
         stroke="url(#timelineGradient)"
         strokeWidth="2"
-        strokeDasharray="1000"
-        strokeDashoffset="1000"
+        vectorEffect="non-scaling-stroke"
       />
       <defs>
         <linearGradient
@@ -140,9 +151,12 @@ function StepCircle({ number, isActive }: StepCircleProps) {
           duration: 0.3,
         },
       }}
-      className={`absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center border-2 font-bold font-space-grotesk text-lg bg-surface transition-all duration-300 ${
-        isActive ? 'border-primary text-primary' : 'border-border text-foreground'
-      }`}
+      className={cn(
+        "absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center border-2 font-bold font-space-grotesk text-lg transition-all duration-300 backdrop-blur-md z-20",
+        isActive
+          ? 'border-primary text-primary bg-primary/10 shadow-[0_0_20px_rgba(15,191,106,0.3)]'
+          : 'border-white/10 text-foreground bg-surface/80'
+      )}
     >
       {number}
     </motion.div>
@@ -151,13 +165,20 @@ function StepCircle({ number, isActive }: StepCircleProps) {
 
 /**
  * Timeline Step Card Component
+ *
+ * FIX: the spacer used to sit on the *opposite* side from the content for
+ * left-aligned cards (because of lg:flex-row-reverse), pushing the card
+ * straight into the centerline instead of leaving runway toward it. The
+ * spacer is now placed so it always sits between the content and the
+ * timeline center, on both sides.
  */
 interface StepCardProps {
   step: ProcessStep;
   isLeft: boolean;
+  isActive: boolean;
 }
 
-function StepCard({ step, isLeft }: StepCardProps) {
+function StepCard({ step, isLeft, isActive }: StepCardProps) {
   const cardRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
@@ -183,33 +204,60 @@ function StepCard({ step, isLeft }: StepCardProps) {
     );
   }, [isLeft]);
 
+  const content = (
+    <div
+      className={cn(
+        "flex-1 p-8 rounded-2xl transition-all duration-500 border backdrop-blur-md",
+        isLeft && "lg:text-right",
+        isActive
+          ? "bg-surface/40 border-primary/40 shadow-[0_0_40px_rgba(15,191,106,0.08)] scale-[1.01]"
+          : "bg-surface/20 border-white/5 shadow-xl hover:border-white/10"
+      )}
+    >
+      <h3 className={cn(
+        "text-2xl font-bold font-space-grotesk mb-4 transition-colors duration-500",
+        isActive ? "text-primary" : "text-foreground/90"
+      )}>
+        {step.title}
+      </h3>
+      <p className="text-sm text-muted leading-relaxed">
+        {step.description}
+      </p>
+    </div>
+  );
+
+  const spacer = <div className="hidden lg:block w-24 flex-shrink-0" aria-hidden="true" />;
+
   return (
     <motion.div
       ref={cardRef}
-      className={`flex ${isLeft ? 'lg:flex-row-reverse' : ''} items-center gap-8 lg:gap-12`}
+      className="flex items-center gap-8 lg:gap-12 lg:w-1/2"
+      style={isLeft ? undefined : { marginLeft: 'auto' }}
     >
-      {/* Content Card */}
-      <div
-        className={`flex-1 ${
-          isLeft ? 'lg:text-right' : ''
-        } bg-surface border border-border rounded-2xl p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/10`}
-      >
-        <h3 className="text-2xl font-bold font-space-grotesk text-foreground mb-4">
-          {step.title}
-        </h3>
-        <p className="text-base text-muted leading-relaxed">
-          {step.description}
-        </p>
-      </div>
-
-      {/* Spacer for circle positioning (visual balance) */}
-      <div className="hidden lg:block w-24 flex-shrink-0" />
+      {/* On left-side steps the spacer sits after the card (toward center).
+          On right-side steps the spacer sits before the card (toward center). */}
+      {isLeft ? (
+        <>
+          {content}
+          {spacer}
+        </>
+      ) : (
+        <>
+          {spacer}
+          {content}
+        </>
+      )}
     </motion.div>
   );
 }
 
 /**
  * Process Section Component
+ *
+ * FIX: onLeave/onLeaveBack used to unconditionally clear activeStep,
+ * causing a flicker between steps as one trigger exits before the next
+ * enters. We now only clear activeStep if the step being left is the
+ * currently active one.
  */
 export function Process() {
   const sectionRef = useRef<HTMLElement>(null);
@@ -254,9 +302,11 @@ export function Process() {
                 start: 'center 80%',
                 once: false,
                 onEnter: () => setActiveStep(idx),
-                onLeave: () => setActiveStep(null),
+                onLeave: () =>
+                  setActiveStep((current) => (current === idx ? null : current)),
                 onEnterBack: () => setActiveStep(idx),
-                onLeaveBack: () => setActiveStep(null),
+                onLeaveBack: () =>
+                  setActiveStep((current) => (current === idx ? null : current)),
               },
             }
           );
@@ -322,7 +372,12 @@ export function Process() {
                   </div>
 
                   {/* Mobile: Step Circle on left */}
-                  <div className="lg:hidden absolute left-0 top-0 w-16 h-16 rounded-full flex items-center justify-center border-2 border-border bg-surface font-bold font-space-grotesk text-lg text-foreground">
+                  <div className={cn(
+                    "lg:hidden absolute left-0 top-0 w-16 h-16 rounded-full flex items-center justify-center border-2 font-bold font-space-grotesk text-lg transition-all duration-300 z-20",
+                    isActive
+                      ? 'border-primary text-primary bg-primary/10 shadow-[0_0_20px_rgba(15,191,106,0.3)]'
+                      : 'border-white/10 text-foreground bg-surface/80'
+                  )}>
                     {step.number}
                   </div>
 
@@ -331,6 +386,7 @@ export function Process() {
                     <StepCard
                       step={step}
                       isLeft={isLeft}
+                      isActive={isActive}
                     />
                   </div>
                 </div>

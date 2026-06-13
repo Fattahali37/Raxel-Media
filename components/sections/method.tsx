@@ -87,17 +87,17 @@ function MethodCard({ step, index }: MethodCardProps) {
     >
       <motion.div
         animate={tilt}
-        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
+        transition={{ type: 'spring', stiffness: 200, damping: 20 }}
         style={{
           transformStyle: 'preserve-3d' as const,
         }}
-        className="relative h-full bg-surface border border-border rounded-2xl p-8 overflow-hidden transition-all duration-300 hover:border-primary cursor-pointer"
+        className="relative h-full bg-surface/20 border border-white/5 rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:border-primary/40 hover:bg-surface/30 cursor-pointer shadow-2xl backdrop-blur-md"
       >
         {/* Large faded number watermark */}
         <div
-          className="absolute top-8 right-8 opacity-5 group-hover:opacity-15 transition-opacity duration-300"
+          className="absolute -top-10 -right-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500"
           style={{
-            fontSize: '280px',
+            fontSize: '240px',
             lineHeight: '1',
             fontWeight: 'bold',
             fontFamily: 'var(--font-space-grotesk)',
@@ -114,23 +114,23 @@ function MethodCard({ step, index }: MethodCardProps) {
         <div className="relative z-10 space-y-4 h-full flex flex-col">
           {/* Step number and title */}
           <div className="flex items-baseline gap-4">
-            <span className="text-5xl font-bold font-space-grotesk text-primary">
+            <span className="text-4xl font-bold font-space-grotesk text-primary">
               {step.number}
             </span>
-            <h3 className="text-2xl font-bold font-space-grotesk text-foreground">
+            <h3 className="text-2xl font-bold font-space-grotesk text-foreground/90">
               {step.title}
             </h3>
           </div>
 
           {/* Description */}
-          <p className="text-base text-muted leading-relaxed flex-grow">
+          <p className="text-sm text-muted leading-relaxed flex-grow">
             {step.description}
           </p>
 
           {/* Arrow indicator on hover */}
-          <div className="pt-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="pt-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-500">
             <svg
-              className="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300"
+              className="w-5 h-5 transform group-hover:translate-x-2 transition-transform duration-500"
               fill="none"
               stroke="currentColor"
               viewBox="0 0 24 24"
@@ -138,7 +138,7 @@ function MethodCard({ step, index }: MethodCardProps) {
               <path
                 strokeLinecap="round"
                 strokeLinejoin="round"
-                strokeWidth={2}
+                strokeWidth={2.5}
                 d="M13 7l5 5m0 0l-5 5m5-5H6"
               />
             </svg>
@@ -147,10 +147,11 @@ function MethodCard({ step, index }: MethodCardProps) {
 
         {/* Hover glow effect */}
         <div
-          className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+          className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
           style={{
             boxShadow:
-              'inset 0 0 20px rgba(15, 191, 106, 0.1), 0 0 30px rgba(15, 191, 106, 0.05)',
+              'inset 0 0 20px rgba(15, 191, 106, 0.08), 0 0 30px rgba(15, 191, 106, 0.03)',
+            background: 'radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.05) 0%, transparent 80%)',
           }}
         />
       </motion.div>

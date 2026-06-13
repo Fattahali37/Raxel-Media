@@ -99,81 +99,83 @@ function ServiceCard({ service, index }: ServiceCardProps) {
       whileInView={{ opacity: 1, y: 0 }}
       transition={{
         duration: 0.8,
-        delay: index * 0.12,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        delay: index * 0.1,
+        ease: [0.215, 0.61, 0.355, 1], // easeOutCubic
       }}
-      viewport={{ once: true, margin: '-100px' }}
+      viewport={{ once: true, margin: '-50px' }}
       whileHover={{
-        scale: 1.02,
-        transition: { duration: 0.3 },
+        scale: 1.01,
+        y: -4,
       }}
-      className={`group relative bg-surface border border-border rounded-2xl p-8 overflow-hidden transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/20 ${
-        service.featured ? 'lg:p-12 flex flex-col justify-between' : ''
+      className={`group relative bg-surface/20 border border-white/5 rounded-2xl p-8 overflow-hidden transition-all duration-500 hover:border-primary/40 hover:bg-surface/30 hover:shadow-xl hover:shadow-primary/5 backdrop-blur-md flex flex-col justify-between h-full ${
+        service.featured ? 'lg:p-12' : ''
       }`}
     >
       {/* Featured card gradient background accent */}
       {service.featured && (
         <div
-          className="absolute inset-0 opacity-0 group-hover:opacity-5 transition-opacity duration-300 pointer-events-none"
+          className="absolute inset-0 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
           style={{
-            background: `linear-gradient(135deg, rgba(15, 191, 106, 0.2) 0%, transparent 100%)`,
+            background: `radial-gradient(circle at 20% 20%, rgba(15, 191, 106, 0.15) 0%, transparent 60%)`,
           }}
         />
       )}
 
-      {/* Icon Badge */}
-      <div className="relative z-10 mb-6">
-        <div
-          className={`inline-flex items-center justify-center rounded-full bg-primary/10 transition-all duration-300 group-hover:bg-primary/20 ${
-            service.featured ? 'w-16 h-16' : 'w-12 h-12'
-          }`}
-        >
-          <Icon
-            className={`text-primary transition-transform duration-300 group-hover:scale-110 ${
-              service.featured ? 'w-8 h-8' : 'w-6 h-6'
+      <div>
+        {/* Icon Badge */}
+        <div className="relative z-10 mb-8">
+          <div
+            className={`inline-flex items-center justify-center rounded-xl bg-primary/5 border border-primary/20 transition-all duration-500 group-hover:bg-primary/10 group-hover:border-primary/40 ${
+              service.featured ? 'w-14 h-14' : 'w-11 h-11'
             }`}
-            strokeWidth={1.5}
-          />
+          >
+            <Icon
+              className={`text-primary transition-transform duration-500 group-hover:scale-110 ${
+                service.featured ? 'w-7 h-7' : 'w-5 h-5'
+              }`}
+              strokeWidth={1.75}
+            />
+          </div>
         </div>
-      </div>
 
-      {/* Content */}
-      <div className="relative z-10 space-y-4">
-        {/* Title */}
-        <h3
-          className={`font-bold font-space-grotesk text-foreground transition-colors duration-300 group-hover:text-primary ${
-            service.featured ? 'text-3xl' : 'text-xl'
-          }`}
-        >
-          {service.title}
-        </h3>
+        {/* Content */}
+        <div className="relative z-10 space-y-3">
+          {/* Title */}
+          <h3
+            className={`font-bold font-space-grotesk text-foreground/90 transition-colors duration-500 group-hover:text-primary ${
+              service.featured ? 'text-3xl tracking-tight' : 'text-xl'
+            }`}
+          >
+            {service.title}
+          </h3>
 
-        {/* Description */}
-        <p
-          className={`text-muted leading-relaxed transition-colors duration-300 ${
-            service.featured ? 'text-base' : 'text-sm'
-          }`}
-        >
-          {service.description}
-        </p>
+          {/* Description */}
+          <p
+            className={`text-muted leading-relaxed transition-colors duration-500 ${
+              service.featured ? 'text-base' : 'text-sm'
+            }`}
+          >
+            {service.description}
+          </p>
+        </div>
       </div>
 
       {/* Corner accent for featured card */}
       {service.featured && (
         <div
-          className="absolute top-0 right-0 w-32 h-32 opacity-0 group-hover:opacity-10 transition-opacity duration-500 pointer-events-none"
+          className="absolute top-0 right-0 w-36 h-36 opacity-0 group-hover:opacity-20 transition-opacity duration-700 pointer-events-none"
           style={{
-            background: `radial-gradient(circle at top right, rgba(15, 191, 106, 0.5), transparent 70%)`,
+            background: `radial-gradient(circle at top right, rgba(15, 191, 106, 0.4), transparent 70%)`,
           }}
         />
       )}
 
       {/* Subtle gloss effect on hover */}
       <div
-        className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
+        className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500"
         style={{
           backgroundImage:
-            'linear-gradient(135deg, rgba(255, 255, 255, 0.05) 0%, rgba(255, 255, 255, 0) 50%, rgba(15, 191, 106, 0.05) 100%)',
+            'linear-gradient(135deg, rgba(255, 255, 255, 0.03) 0%, rgba(255, 255, 255, 0) 50%, rgba(15, 191, 106, 0.03) 100%)',
         }}
       />
     </motion.div>

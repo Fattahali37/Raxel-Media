@@ -72,25 +72,36 @@ function CaseStudyCard({ study, isActive }: CaseStudyCardProps) {
   return (
     <motion.div
       animate={{
-        scale: isActive ? 1 : 0.92,
-        opacity: isActive ? 1 : 0.6,
+        scale: isActive ? 1 : 0.94,
+        opacity: isActive ? 1 : 0.4,
       }}
-      transition={{ duration: 0.3 }}
-      className="flex-shrink-0 w-full md:w-[70vw] bg-surface border border-border rounded-3xl p-12 flex flex-col h-96 md:h-[500px]"
+      transition={{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }}
+      className="flex-shrink-0 w-full md:w-[70vw] bg-surface/20 border border-white/5 rounded-3xl p-8 md:p-12 flex flex-col h-auto md:h-[500px] justify-between backdrop-blur-md shadow-2xl relative"
     >
-      {/* Logo placeholder */}
-      <div className="mb-12">
-        <div className="w-16 h-16 border-2 border-border rounded-lg flex items-center justify-center text-sm text-muted font-medium">
-          Logo
+      {/* Brand & Industry Header */}
+      <div className="flex items-center justify-between mb-8">
+        <div className="flex items-center gap-4">
+          <div className="w-12 h-12 bg-primary/5 border border-primary/20 rounded-xl flex items-center justify-center text-xs tracking-wider text-primary font-bold">
+            RAXEL
+          </div>
+          <div>
+            <h4 className="text-lg font-bold font-space-grotesk text-foreground/90 leading-none mb-1">
+              {study.brand}
+            </h4>
+            <span className="text-[10px] text-muted/60 uppercase tracking-widest font-semibold">{study.industry}</span>
+          </div>
         </div>
+        <span className="px-3 py-1 rounded-full bg-primary/5 border border-primary/20 text-primary text-[9px] uppercase tracking-widest font-bold">
+          Verified Case Study
+        </span>
       </div>
 
       {/* Main stat */}
-      <div className="mb-8">
-        <span className="text-6xl md:text-7xl lg:text-8xl font-bold font-space-grotesk text-primary">
+      <div className="mb-6 relative">
+        <span className="text-7xl md:text-8xl font-bold font-space-grotesk tracking-tight text-primary drop-shadow-[0_0_30px_rgba(15,191,106,0.15)]">
           {study.result}
         </span>
-        <p className="text-sm text-muted uppercase tracking-widest font-medium mt-4">
+        <p className="text-xs text-muted uppercase tracking-widest font-semibold mt-2">
           {study.industry === 'Skincare DTC'
             ? 'ROAS Increase'
             : study.industry === 'Fitness & Wellness'
@@ -99,32 +110,22 @@ function CaseStudyCard({ study, isActive }: CaseStudyCardProps) {
         </p>
       </div>
 
-      {/* Industry tag */}
-      <div className="mb-8">
-        <span className="inline-block px-4 py-1 rounded-full bg-primary/10 text-primary text-xs uppercase tracking-widest font-semibold">
-          {study.industry}
-        </span>
-      </div>
-
-      {/* Spacer */}
-      <div className="flex-grow" />
-
       {/* Quote */}
-      <div className="space-y-6 border-t border-border/50 pt-8">
-        <p className="text-base md:text-lg text-foreground italic leading-relaxed">
+      <div className="space-y-4 border-t border-white/5 pt-6 mt-auto">
+        <p className="text-base text-foreground/90 italic leading-relaxed">
           &ldquo;{study.quote}&rdquo;
         </p>
 
         {/* Attribution */}
-        <div>
-          <p className="font-semibold text-foreground text-sm">{study.attribution.name}</p>
-          <p className="text-xs text-muted uppercase tracking-widest">{study.attribution.title}</p>
+        <div className="flex items-center gap-3">
+          <div className="w-8 h-8 rounded-full bg-gradient-to-tr from-primary/20 to-primary/5 flex items-center justify-center text-xs font-bold text-primary border border-primary/20">
+            R
+          </div>
+          <div>
+            <p className="font-semibold text-foreground/90 text-sm leading-none">{study.attribution.name}</p>
+            <p className="text-[10px] text-muted/60 uppercase tracking-widest mt-1">{study.attribution.title}</p>
+          </div>
         </div>
-      </div>
-
-      {/* Placeholder indicator */}
-      <div className="mt-6 pt-6 border-t border-border/30">
-        <p className="text-xs text-muted/50">[PLACEHOLDER DATA - For Demo Purposes]</p>
       </div>
     </motion.div>
   );

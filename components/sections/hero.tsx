@@ -62,29 +62,33 @@ export function Hero() {
 
   return (
     <section className="relative min-h-screen bg-background text-foreground overflow-hidden">
+      {/* Premium Grid Background Overlay */}
+      <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.015)_1px,transparent_1px)] bg-[size:4rem_4rem] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_40%,#000_70%,transparent_100%)] pointer-events-none z-0" />
+
       {/* Animated Gradient Blob Background */}
       <motion.div
         ref={blobRef}
         initial={{ opacity: 0 }}
-        animate={{ opacity: 0.15 }}
-        transition={{ duration: 1 }}
-        className="absolute inset-0 pointer-events-none"
+        animate={{ opacity: 0.2 }}
+        transition={{ duration: 1.5 }}
+        className="absolute inset-0 pointer-events-none z-0"
         style={{
           background: `
-            radial-gradient(circle at 30% 50%, rgba(15, 191, 106, 0.3) 0%, transparent 50%),
-            radial-gradient(circle at 80% 70%, rgba(15, 191, 106, 0.2) 0%, transparent 60%),
-            radial-gradient(circle at 50% 0%, rgba(15, 191, 106, 0.15) 0%, transparent 70%)
+            radial-gradient(circle at 20% 30%, rgba(15, 191, 106, 0.25) 0%, transparent 50%),
+            radial-gradient(circle at 80% 60%, rgba(15, 191, 106, 0.15) 0%, transparent 60%),
+            radial-gradient(circle at 50% -10%, rgba(15, 191, 106, 0.12) 0%, transparent 70%)
           `,
-          filter: 'blur(60px)',
+          filter: 'blur(80px)',
         }}
       >
         <motion.div
           animate={{
-            x: [0, 40, -30, 0],
-            y: [0, -40, 30, 0],
+            x: [0, 50, -40, 0],
+            y: [0, -50, 40, 0],
+            scale: [1, 1.1, 0.95, 1],
           }}
           transition={{
-            duration: 20,
+            duration: 25,
             ease: 'easeInOut',
             repeat: Infinity,
           }}
@@ -104,8 +108,8 @@ export function Hero() {
           >
             {/* Eyebrow Tag */}
             <motion.div variants={item} className="flex items-center gap-2">
-              <span className="inline-flex w-2 h-2 rounded-full bg-primary" />
-              <span className="text-sm font-medium tracking-widest uppercase text-muted">
+              <span className="inline-flex w-2.5 h-2.5 rounded-full bg-primary animate-pulse" />
+              <span className="text-sm font-semibold tracking-widest uppercase text-primary/80">
                 Direct-Response Creative Agency
               </span>
             </motion.div>
@@ -116,7 +120,7 @@ export function Hero() {
               <motion.h1
                 custom={0}
                 variants={lineVariants}
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk leading-tight"
+                className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk leading-none tracking-tight text-foreground"
               >
                 Ads That Don&apos;t
               </motion.h1>
@@ -125,7 +129,7 @@ export function Hero() {
               <motion.h1
                 custom={1}
                 variants={lineVariants}
-                className="text-5xl sm:text-6xl lg:text-7xl font-space-grotesk leading-tight"
+                className="text-5xl sm:text-6xl lg:text-7xl font-space-grotesk leading-none tracking-tight"
                 style={{
                   background: 'linear-gradient(135deg, #0FBF6A 0%, #0A8F4F 100%)',
                   WebkitBackgroundClip: 'text',
@@ -140,7 +144,7 @@ export function Hero() {
               <motion.h1
                 custom={2}
                 variants={lineVariants}
-                className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk leading-tight"
+                className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk leading-none tracking-tight text-foreground"
               >
                 They Get Sold.
               </motion.h1>
@@ -162,13 +166,16 @@ export function Hero() {
             >
               {/* Primary CTA */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ 
+                  scale: 1.04, 
+                  boxShadow: '0 0 30px rgba(15, 191, 106, 0.4)',
+                  backgroundColor: '#12d177'
+                }}
                 whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
                 className={cn(
                   'px-8 py-4 rounded-full font-semibold font-space-grotesk',
-                  'bg-primary text-background',
-                  'hover:shadow-lg hover:shadow-primary/50',
-                  'transition-shadow duration-300',
+                  'bg-primary text-background border border-primary/20',
                   'text-base sm:text-lg'
                 )}
               >
@@ -177,19 +184,22 @@ export function Hero() {
 
               {/* Secondary CTA */}
               <motion.button
-                whileHover={{ scale: 1.05 }}
+                whileHover={{ 
+                  scale: 1.04,
+                  backgroundColor: 'rgba(15, 191, 106, 0.08)',
+                  borderColor: '#0FBF6A'
+                }}
                 whileTap={{ scale: 0.98 }}
+                transition={{ type: 'spring', stiffness: 400, damping: 15 }}
                 className={cn(
-                  'px-8 py-4 rounded-full font-semibold font-space-grotesk',
-                  'border-2 border-primary text-primary',
-                  'hover:bg-primary hover:text-background hover:shadow-lg hover:shadow-primary/50',
-                  'transition-all duration-300',
+                  'px-8 py-4 rounded-full font-semibold font-space-grotesk border',
+                  'border-primary/30 text-primary bg-primary/5 backdrop-blur-sm',
                   'flex items-center justify-center gap-2',
                   'text-base sm:text-lg'
                 )}
               >
                 View Our Work
-                <ChevronDown className="w-5 h-5 rotate-90" />
+                <ChevronDown className="w-5 h-5 rotate-90" strokeWidth={2.5} />
               </motion.button>
             </motion.div>
           </motion.div>
@@ -199,24 +209,22 @@ export function Hero() {
         </div>
 
         {/* Scroll Indicator */}
-        <motion.div
-          className="absolute bottom-8 left-1/2 transform -translate-x-1/2"
-          animate={{ y: [0, 8, 0] }}
-          transition={{
-            duration: 2,
-            ease: 'easeInOut',
-            repeat: Infinity,
-          }}
-        >
-          <button
+        <div className="absolute bottom-8 left-1/2 -translate-x-1/2">
+          <motion.button
             onClick={scrollToNext}
-            className="flex flex-col items-center gap-2 text-muted hover:text-primary transition-colors duration-300"
+            animate={{ y: [0, 8, 0] }}
+            transition={{
+              duration: 2,
+              ease: 'easeInOut',
+              repeat: Infinity,
+            }}
+            className="flex flex-col items-center gap-2 text-muted hover:text-primary transition-colors duration-300 group"
             aria-label="Scroll to next section"
           >
-            <span className="text-sm font-medium">Scroll</span>
-            <ChevronDown className="w-5 h-5 animate-bounce" strokeWidth={1.5} />
-          </button>
-        </motion.div>
+            <span className="text-xs uppercase tracking-widest font-semibold text-muted/60 group-hover:text-primary transition-colors">Scroll</span>
+            <ChevronDown className="w-5 h-5 text-primary" strokeWidth={2} />
+          </motion.button>
+        </div>
       </div>
 
       {/* CSS Animation Styles */}

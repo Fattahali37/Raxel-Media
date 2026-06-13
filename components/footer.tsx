@@ -17,7 +17,6 @@ export function Footer() {
           entry.target.querySelectorAll('[data-fade-in]').forEach((el, index) => {
             const elem = el as HTMLElement;
             elem.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
-            elem.style.opacity = '0';
           });
         }
       },
@@ -54,7 +53,7 @@ export function Footer() {
           {/* Grid Layout */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12 lg:gap-8 mb-12">
             {/* Column 1: Logo & Tagline */}
-            <div data-fade-in className="space-y-4">
+            <div data-fade-in className="space-y-4 opacity-0">
               <div className="font-bold font-space-grotesk text-2xl text-foreground">
                 RAXEL
               </div>
@@ -67,7 +66,7 @@ export function Footer() {
             </div>
 
             {/* Column 2: Navigate */}
-            <div data-fade-in className="space-y-4">
+            <div data-fade-in className="space-y-4 opacity-0">
               <h4 className="font-semibold font-space-grotesk text-foreground text-sm uppercase tracking-widest">
                 Navigate
               </h4>
@@ -85,7 +84,7 @@ export function Footer() {
             </div>
 
             {/* Column 3: Connect */}
-            <div data-fade-in className="space-y-4">
+            <div data-fade-in className="space-y-4 opacity-0">
               <h4 className="font-semibold font-space-grotesk text-foreground text-sm uppercase tracking-widest">
                 Connect
               </h4>
@@ -121,7 +120,7 @@ export function Footer() {
             </div>
 
             {/* Column 4: Contact */}
-            <div data-fade-in className="space-y-4">
+            <div data-fade-in className="space-y-4 opacity-0">
               <h4 className="font-semibold font-space-grotesk text-foreground text-sm uppercase tracking-widest">
                 Contact
               </h4>
@@ -147,7 +146,7 @@ export function Footer() {
             {/* Links Row */}
             <div
               data-fade-in
-              className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-xs text-muted justify-between items-center"
+              className="flex flex-col sm:flex-row gap-4 sm:gap-8 text-xs text-muted justify-between items-center opacity-0"
             >
               <div className="flex gap-6">
                 <a

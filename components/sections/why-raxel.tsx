@@ -89,19 +89,19 @@ function FeatureRow({ feature, index }: FeatureRowProps) {
   return (
     <div
       ref={rowRef}
-      className={`grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center`}
+      className="grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center"
     >
       {/* Left Column - Icon and Number */}
       {isLeft ? (
         <div className="flex flex-col items-center md:items-start space-y-6">
           {/* Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-center shadow-2xl backdrop-blur-md">
             <Icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
           </div>
 
           {/* Large faded number */}
           <div
-            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-10 leading-none"
+            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-[0.06] leading-none tracking-tighter"
             aria-hidden="true"
           >
             {feature.number}
@@ -111,12 +111,12 @@ function FeatureRow({ feature, index }: FeatureRowProps) {
 
       {/* Right Column - Text Content */}
       <div
-        className={`space-y-6 ${isLeft ? '' : 'md:order-first'}`}
+        className={`space-y-4 ${isLeft ? '' : 'md:order-first'}`}
       >
-        <h3 className="text-4xl md:text-5xl font-bold font-space-grotesk text-foreground">
+        <h3 className="text-3xl md:text-4xl lg:text-5xl font-bold font-space-grotesk text-foreground/90 tracking-tight">
           {feature.title}
         </h3>
-        <p className="text-lg md:text-xl text-muted leading-relaxed max-w-lg">
+        <p className="text-base md:text-lg text-muted leading-relaxed max-w-lg">
           {feature.description}
         </p>
       </div>
@@ -125,13 +125,13 @@ function FeatureRow({ feature, index }: FeatureRowProps) {
       {!isLeft ? (
         <div className="flex flex-col items-center md:items-start space-y-6">
           {/* Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
+          <div className="w-16 h-16 rounded-2xl bg-primary/5 border border-primary/20 flex items-center justify-center shadow-2xl backdrop-blur-md">
             <Icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
           </div>
 
           {/* Large faded number */}
           <div
-            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-10 leading-none"
+            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-[0.06] leading-none tracking-tighter"
             aria-hidden="true"
           >
             {feature.number}

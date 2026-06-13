@@ -1,5 +1,6 @@
 'use client';
 
+import { PageLoader } from '@/components/loader';
 import { Hero } from '@/components/sections/hero';
 import { TrustBar } from '@/components/sections/trust-bar';
 import { Problem } from '@/components/sections/problem';
@@ -15,6 +16,7 @@ import { FinalCTA } from '@/components/sections/final-cta';
 export default function Home() {
   return (
     <main className="bg-background text-foreground">
+      <PageLoader />
       <Hero />
       <TrustBar />
       <Problem />

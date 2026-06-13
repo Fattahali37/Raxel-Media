@@ -2,6 +2,42 @@
 
 import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
+import type { Variants } from 'framer-motion';
+
+const overlayVariants: Variants = {
+  exit: {
+    opacity: 0,
+    transition: {
+      duration: 0.8,
+      ease: [0.76, 0, 0.24, 1],
+    },
+  },
+};
+
+const letterVariants: Variants = {
+  hidden: {
+    opacity: 0,
+    y: 50,
+  },
+  visible: (i: number) => ({
+    opacity: 1,
+    y: 0,
+    transition: {
+      duration: 0.5,
+      delay: i * 0.04,
+      ease: [0.215, 0.61, 0.355, 1],
+    },
+  }),
+  exit: (i: number) => ({
+    opacity: 0,
+    y: -30,
+    transition: {
+      duration: 0.3,
+      delay: i * 0.02,
+      ease: [0.55, 0.055, 0.675, 0.19],
+    },
+  }),
+};
 
 /**
  * PageLoader Component

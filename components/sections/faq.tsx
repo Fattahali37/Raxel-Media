@@ -61,37 +61,37 @@ interface FAQItemProps {
 
 function FAQItemComponent({ item, isOpen, onToggle }: FAQItemProps) {
   return (
-    <div className="border-b border-border last:border-b-0">
+    <div className="bg-surface/20 border border-white/5 rounded-2xl mb-4 overflow-hidden transition-all duration-500 hover:border-primary/30 hover:bg-surface/30 backdrop-blur-md shadow-lg">
       <button
         onClick={onToggle}
-        className="w-full py-6 flex items-center justify-between group hover:text-primary transition-colors duration-300"
+        className="w-full px-8 py-6 flex items-center justify-between group text-left transition-colors duration-300"
       >
         {/* Question */}
-        <h3 className="text-lg font-semibold font-space-grotesk text-foreground text-left">
+        <h3 className="text-lg font-semibold font-space-grotesk text-foreground/90 transition-colors duration-300 group-hover:text-primary">
           {item.question}
         </h3>
 
         {/* Plus/Minus Icon */}
         <motion.div
-          animate={{ rotate: isOpen ? 45 : 0 }}
-          transition={{ duration: 0.3, ease: 'easeInOut' }}
+          animate={{ rotate: isOpen ? 135 : 0 }}
+          transition={{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }}
           className="flex-shrink-0 ml-4"
         >
-          <Plus className="w-6 h-6 text-primary" strokeWidth={2} />
+          <Plus className="w-5 h-5 text-primary drop-shadow-[0_0_8px_rgba(15,191,106,0.4)]" strokeWidth={2.5} />
         </motion.div>
       </button>
 
       {/* Answer - Expandable */}
-      <AnimatePresence>
+      <AnimatePresence initial={false}>
         {isOpen && (
           <motion.div
-            initial={{ opacity: 0, height: 0 }}
-            animate={{ opacity: 1, height: 'auto' }}
-            exit={{ opacity: 0, height: 0 }}
-            transition={{ duration: 0.3, ease: 'easeInOut' }}
+            initial={{ height: 0, opacity: 0 }}
+            animate={{ height: 'auto', opacity: 1 }}
+            exit={{ height: 0, opacity: 0 }}
+            transition={{ duration: 0.4, ease: [0.215, 0.61, 0.355, 1] }}
             className="overflow-hidden"
           >
-            <p className="pb-6 text-base text-muted leading-relaxed">
+            <p className="px-8 pb-6 text-sm text-muted leading-relaxed">
               {item.answer}
             </p>
           </motion.div>
@@ -162,17 +162,15 @@ export function FAQ() {
         </div>
 
         {/* FAQ List */}
-        <div className="bg-surface/30 border border-border rounded-2xl p-8 lg:p-12">
-          <div className="divide-y divide-border">
-            {FAQ_ITEMS.map((item) => (
-              <FAQItemComponent
-                key={item.id}
-                item={item}
-                isOpen={openId === item.id}
-                onToggle={() => setOpenId(openId === item.id ? null : item.id)}
-              />
-            ))}
-          </div>
+        <div className="space-y-4">
+          {FAQ_ITEMS.map((item) => (
+            <FAQItemComponent
+              key={item.id}
+              item={item}
+              isOpen={openId === item.id}
+              onToggle={() => setOpenId(openId === item.id ? null : item.id)}
+            />
+          ))}
         </div>
       </div>
 

@@ -17,51 +17,58 @@ if (typeof window !== 'undefined') {
 function GlitchedAdCard() {
   return (
     <div className="relative w-72 h-96 group">
+      {/* Background red glow aura */}
+      <div className="absolute -inset-4 bg-red-500/5 rounded-2xl blur-3xl group-hover:bg-red-500/10 transition-all duration-500 pointer-events-none z-0" />
+
       {/* Main card */}
       <div
-        className="absolute inset-0 bg-surface border-2 border-border rounded-lg overflow-hidden"
+        className="absolute inset-0 bg-surface/80 border border-border/80 rounded-xl overflow-hidden shadow-2xl backdrop-blur-sm z-10"
         style={{
           transform: 'rotate(-4deg)',
-          filter: 'blur(1px) saturate(0.8)',
+          filter: 'blur(0.5px) saturate(0.9)',
         }}
       >
         {/* Card header */}
-        <div className="h-40 bg-gradient-to-br from-muted/20 to-muted/10 flex items-center justify-center">
-          <div className="text-center">
-            <div className="w-12 h-12 bg-muted/30 rounded-full mx-auto mb-2" />
-            <p className="text-xs text-muted">Generic product image</p>
+        <div className="h-44 bg-gradient-to-br from-surface to-surface/40 flex items-center justify-center border-b border-border/40">
+          <div className="text-center p-4">
+            <div className="w-10 h-10 bg-muted/10 rounded-full mx-auto mb-3 flex items-center justify-center text-muted/50 text-xs font-semibold border border-white/5">
+              IMG
+            </div>
+            <p className="text-[10px] text-muted/50 uppercase tracking-widest font-semibold">Generic product image</p>
           </div>
         </div>
 
         {/* Card content */}
-        <div className="p-4 space-y-3">
-          <p className="text-sm font-medium text-foreground line-clamp-2">
-            Click Here for Amazing Offer
+        <div className="p-5 space-y-3">
+          <p className="text-sm font-semibold text-foreground/90 tracking-tight leading-snug line-clamp-2">
+            🚨 Click Here for Amazing Offer! 🚨
           </p>
-          <p className="text-xs text-muted line-clamp-3">
-            This is the same hook everyone uses. Boring. Ineffective. Ignored.
+          <p className="text-xs text-muted/60 leading-relaxed line-clamp-3">
+            This is the same hook everyone uses. Boring. Ineffective. Ignored by modern consumers.
           </p>
 
           {/* CTA button - looks generic */}
-          <button
-            className="w-full py-2 mt-4 bg-muted/20 text-muted text-xs font-medium rounded hover:bg-muted/30 transition-colors cursor-not-allowed opacity-70"
-            disabled
-          >
-            Learn More
-          </button>
+          <div className="pt-2">
+            <button
+              className="w-full py-2 bg-muted/10 text-muted/40 text-[10px] font-bold tracking-widest uppercase rounded border border-border/60 cursor-not-allowed opacity-60"
+              disabled
+            >
+              Learn More
+            </button>
+          </div>
         </div>
       </div>
 
       {/* RGB glitch effect layers */}
       <div
-        className="absolute inset-0 border-2 border-red-500/50 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute inset-0 border border-red-500/30 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20"
         style={{
           transform: 'rotate(-4deg) translate(2px, 0)',
           mixBlendMode: 'multiply',
         }}
       />
       <div
-        className="absolute inset-0 border-2 border-blue-500/50 rounded-lg pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity"
+        className="absolute inset-0 border border-blue-500/30 rounded-xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity z-20"
         style={{
           transform: 'rotate(-4deg) translate(-2px, 0)',
           mixBlendMode: 'screen',
@@ -104,16 +111,17 @@ function RejectedAdCards() {
   ];
 
   return (
-    <div className="relative w-80 h-80">
+    <div className="relative w-72 h-64">
       {cards.map((card, index) => (
         <div
           key={index}
-          className="absolute w-64 h-32 bg-surface border-2 border-border rounded-lg p-4 flex items-center justify-between"
+          className="absolute w-64 h-28 bg-surface/60 border border-white/5 rounded-xl p-4 flex items-center justify-between shadow-xl backdrop-blur-md transition-all duration-300 hover:border-red-500/30"
           style={{
             transform: `rotate(${card.rotation}deg) translateX(${index * 20}px) translateY(${index * 30}px)`,
-            opacity: 0.8 - index * 0.15,
+            opacity: 0.9 - index * 0.15,
             zIndex: cards.length - index,
           }}
+          data-rotation={card.rotation}
           ref={(el) => {
             if (el) {
               el.dataset.cardindex = index.toString();
@@ -122,10 +130,10 @@ function RejectedAdCards() {
         >
           {/* Card content */}
           <div className="flex-1 space-y-1">
-            <p className="text-xs text-muted uppercase tracking-wider font-medium">
+            <p className="text-[10px] text-red-500/80 uppercase tracking-widest font-semibold">
               Rejected
             </p>
-            <p className="text-sm text-foreground font-medium line-clamp-1">
+            <p className="text-sm text-foreground/90 font-semibold tracking-tight line-clamp-1">
               {card.label}
             </p>
           </div>
@@ -133,8 +141,8 @@ function RejectedAdCards() {
           {/* Red X icon */}
           <div className="ml-4 flex-shrink-0">
             <div className="relative">
-              <X className="w-6 h-6 text-red-500/70" strokeWidth={3} />
-              <div className="absolute inset-0 bg-red-500/20 blur-lg" />
+              <X className="w-5 h-5 text-red-500/80" strokeWidth={3} />
+              <div className="absolute inset-0 bg-red-500/20 blur-md rounded-full" />
             </div>
           </div>
         </div>
@@ -218,14 +226,17 @@ export function Problem() {
         );
 
         // Glow pulse animation on the text
-        gsap.to(closingRef.current.querySelector('.glow-text'), {
-          textShadow:
-            '0 0 20px rgba(15, 191, 106, 0.5), 0 0 40px rgba(15, 191, 106, 0.3)',
-          duration: 2,
-          repeat: -1,
-          yoyo: true,
-          delay: 1,
-        });
+        const glowEl = closingRef.current.querySelector('.glow-text');
+        if (glowEl) {
+          gsap.to(glowEl, {
+            textShadow:
+              '0 0 20px rgba(15, 191, 106, 0.5), 0 0 40px rgba(15, 191, 106, 0.3)',
+            duration: 2,
+            repeat: -1,
+            yoyo: true,
+            delay: 1,
+          });
+        }
       }
 
       // Glitched card animation (main visual)
@@ -236,7 +247,7 @@ export function Problem() {
           {
             opacity: 1,
             x: 0,
-            rotation: 0,
+            rotation: -4,
             duration: 1,
             delay: 0.2,
             ease: 'power3.out',
@@ -245,18 +256,19 @@ export function Problem() {
               start: 'top 60%',
               toggleActions: 'play none none reverse',
             },
+            onComplete: () => {
+              // Subtle continuous rotation for visual interest, starts only
+              // after the entrance animation settles so it never fights it
+              gsap.to(visualRef.current, {
+                rotation: -2,
+                duration: 3,
+                yoyo: true,
+                repeat: -1,
+                ease: 'sine.inOut',
+              });
+            },
           }
         );
-
-        // Subtle continuous rotation for visual interest
-        gsap.to(visualRef.current, {
-          rotation: 2,
-          duration: 3,
-          yoyo: true,
-          repeat: -1,
-          ease: 'sine.inOut',
-          delay: 1.2,
-        });
       }
 
       // Rejected cards staggered scatter entrance
@@ -264,21 +276,19 @@ export function Problem() {
         const cards = rejectedCardsRef.current.querySelectorAll('[data-cardindex]');
         gsap.fromTo(
           cards,
-          (i: number) => ({
-            opacity: 0,
-            x: i % 2 === 0 ? -100 : 100,
-            y: 50,
-            rotation: i * 10,
-          }),
           {
-            opacity: (i: number) => 0.8 - i * 0.15,
-            x: 0,
-            y: 0,
+            opacity: 0,
+            x: (i: number) => (i % 2 === 0 ? -100 : 100),
+            y: 50,
+            rotation: (i: number) => i * 10,
+          },
+          {
+            opacity: (i: number) => 0.9 - i * 0.15,
+            x: (i: number) => i * 20,
+            y: (i: number) => i * 30,
             rotation: (i: number) => {
               const card = cards[i] as HTMLElement;
-              const transform = card.style.transform;
-              const match = transform.match(/rotate\((-?\d+\.?\d*)deg\)/);
-              return parseFloat(match?.[1] || '0');
+              return parseFloat(card.getAttribute('data-rotation') || '0');
             },
             duration: 0.8,
             stagger: 0.15,
@@ -300,7 +310,7 @@ export function Problem() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background"
+      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden"
       style={{
         backgroundColor: 'rgba(18, 18, 18, 0.5)',
       }}
@@ -356,23 +366,30 @@ export function Problem() {
           </div>
 
           {/* Right side - visual elements (~45%) */}
-          <div className="lg:col-span-6 flex justify-center items-center min-h-96">
-            <div className="relative w-full h-full flex items-center justify-center">
-              {/* Main glitched card */}
-              <div ref={visualRef} className="absolute z-20">
-                <GlitchedAdCard />
-              </div>
-
-              {/* Rejected cards stack */}
+          <div className="lg:col-span-6 flex justify-center items-center min-h-[500px]">
+            <div className="relative w-full max-w-[480px] h-[480px]">
+              {/* Rejected cards stack — bottom-left, behind main card */}
               <div
                 ref={rejectedCardsRef}
-                className="absolute z-10 opacity-80"
+                className="absolute z-10"
                 style={{
-                  right: '10%',
-                  bottom: '20%',
+                  left: '0px',
+                  bottom: '0px',
                 }}
               >
                 <RejectedAdCards />
+              </div>
+
+              {/* Main glitched card — top-right, in front */}
+              <div
+                ref={visualRef}
+                className="absolute z-20"
+                style={{
+                  right: '0px',
+                  top: '0px',
+                }}
+              >
+                <GlitchedAdCard />
               </div>
             </div>
           </div>

@@ -78,17 +78,17 @@ export function FinalCTA() {
         className="absolute inset-0 pointer-events-none"
         initial={{ opacity: 0 }}
         whileInView={{ opacity: 1 }}
-        transition={{ duration: 0.8 }}
+        transition={{ duration: 1.2 }}
       >
         <div
           style={{
             position: 'absolute',
             inset: 0,
             background: `
-              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.15) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.08) 0%, transparent 70%)
+              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.22) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.1) 0%, transparent 70%)
             `,
-            filter: 'blur(80px)',
+            filter: 'blur(90px)',
             animation: 'pulse-glow 4s ease-in-out infinite',
           }}
         />
@@ -116,31 +116,33 @@ export function FinalCTA() {
         <div data-animate className="pt-8">
           <motion.button
             ref={buttonRef}
-            whileHover={{ scale: 1.05 }}
+            whileHover={{ 
+              scale: 1.04, 
+              boxShadow: '0 0 50px rgba(15, 191, 106, 0.5)',
+              backgroundColor: '#12d177'
+            }}
             whileTap={{ scale: 0.98 }}
+            transition={{ type: 'spring', stiffness: 400, damping: 15 }}
             className={cn(
-              'px-10 py-5 rounded-full font-semibold font-space-grotesk',
-              'bg-primary text-background',
+              'px-10 py-5 rounded-full font-bold font-space-grotesk',
+              'bg-primary text-background border border-primary/20',
               'text-lg',
               'relative overflow-hidden',
-              'transition-shadow duration-300'
+              'transition-colors duration-300'
             )}
-            style={{
-              boxShadow: '0 0 40px rgba(15, 191, 106, 0.3)',
-            }}
           >
             {/* Animated pulse glow */}
             <motion.div
               className="absolute inset-0 rounded-full pointer-events-none"
               animate={{
                 boxShadow: [
-                  'inset 0 0 20px rgba(15, 191, 106, 0.5)',
-                  'inset 0 0 40px rgba(15, 191, 106, 0.2)',
-                  'inset 0 0 20px rgba(15, 191, 106, 0.5)',
+                  'inset 0 0 20px rgba(15, 191, 106, 0.4)',
+                  'inset 0 0 45px rgba(15, 191, 106, 0.1)',
+                  'inset 0 0 20px rgba(15, 191, 106, 0.4)',
                 ],
               }}
               transition={{
-                duration: 2,
+                duration: 2.5,
                 repeat: Infinity,
                 ease: 'easeInOut',
               }}

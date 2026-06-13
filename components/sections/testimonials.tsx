@@ -67,35 +67,38 @@ interface TestimonialCardProps {
 }
 
 function TestimonialCard({ testimonial }: TestimonialCardProps) {
+  const initial = testimonial.name ? testimonial.name[1] || 'R' : 'R';
   return (
-    <div className="flex-shrink-0 w-96 bg-surface border border-border rounded-2xl p-8 flex flex-col h-full transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/10 hover:-translate-y-1 group">
+    <div className="flex-shrink-0 w-96 bg-surface/20 border border-white/5 rounded-2xl p-8 flex flex-col h-full transition-all duration-500 hover:border-primary/40 hover:bg-surface/30 hover:shadow-2xl hover:shadow-primary/5 hover:-translate-y-1.5 group backdrop-blur-md">
       {/* Star Rating */}
-      <div className="flex gap-1.5 mb-6">
+      <div className="flex gap-1 mb-6">
         {Array.from({ length: testimonial.rating }).map((_, i) => (
           <Star
             key={i}
-            className="w-5 h-5 fill-primary text-primary"
+            className="w-4.5 h-4.5 fill-primary text-primary drop-shadow-[0_0_8px_rgba(15,191,106,0.6)]"
             strokeWidth={0}
           />
         ))}
       </div>
 
       {/* Quote */}
-      <p className="text-base text-foreground leading-relaxed flex-grow mb-8 italic">
+      <p className="text-sm text-foreground/90 leading-relaxed flex-grow mb-8 italic">
         &ldquo;{testimonial.quote}&rdquo;
       </p>
 
       {/* Avatar Placeholder + Info */}
-      <div className="flex gap-4 items-start border-t border-border/50 pt-6">
+      <div className="flex gap-4 items-center border-t border-white/5 pt-6 mt-auto">
         {/* Avatar Placeholder */}
-        <div className="w-12 h-12 rounded-full bg-gradient-to-br from-primary/20 to-primary/10 flex-shrink-0" />
+        <div className="w-10 h-10 rounded-full bg-gradient-to-br from-primary/30 to-primary/5 flex items-center justify-center font-bold text-primary text-sm border border-primary/20 flex-shrink-0 shadow-lg">
+          {initial}
+        </div>
 
         {/* Name and Title */}
         <div className="flex-grow min-w-0">
-          <p className="font-semibold text-foreground text-sm truncate">
+          <p className="font-semibold text-foreground/90 text-sm leading-none mb-1">
             {testimonial.name}
           </p>
-          <p className="text-xs text-muted truncate">
+          <p className="text-xs text-muted/60 tracking-wide">
             {testimonial.title}, {testimonial.brand}
           </p>
         </div>
@@ -172,10 +175,10 @@ function MarqueeRow({ isReverse = false }: MarqueeRowProps) {
 
         @keyframes marquee-reverse {
           0% {
-            transform: translateX(0);
+            transform: translateX(-50%);
           }
           100% {
-            transform: translateX(50%);
+            transform: translateX(0);
           }
         }
 
