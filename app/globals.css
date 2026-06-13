@@ -1,0 +1,171 @@
+/* CSS Custom Properties */
+:root {
+  --color-background: #0a0a0a;
+  --color-surface: #121212;
+  --color-primary: #0fbf6a;
+  --color-primary-dim: #0a8f4f;
+  --color-foreground: #f5f5f5;
+  --color-muted: #8a8a8a;
+  --color-border: #262626;
+}
+
+/* Smooth font rendering */
+@import url('https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+
+html {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-family: var(--font-inter);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  background-color: var(--color-background);
+  color: var(--color-foreground);
+  font-family: var(--font-inter);
+  font-size: 1rem;
+  line-height: 1.5;
+  letter-spacing: 0;
+  overflow-x: hidden;
+}
+
+/* Grain Texture Overlay */
+body::before {
+  content: '';
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E");
+  pointer-events: none;
+  z-index: 9999;
+  mix-blend-mode: overlay;
+  opacity: 0.4;
+}
+
+/* Typography Scale - Responsive with clamp() */
+h1 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(2rem, 5vw, 3.5rem);
+  font-weight: 700;
+  line-height: 1.1;
+  letter-spacing: -0.02em;
+  color: var(--color-foreground);
+  margin-bottom: 1rem;
+}
+
+h2 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(1.75rem, 4vw, 2.5rem);
+  font-weight: 700;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--color-foreground);
+  margin-bottom: 0.875rem;
+}
+
+h3 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(1.5rem, 3vw, 1.875rem);
+  font-weight: 600;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--color-foreground);
+  margin-bottom: 0.75rem;
+}
+
+h4 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+  font-weight: 600;
+  line-height: 1.3;
+  color: var(--color-foreground);
+  margin-bottom: 0.625rem;
+}
+
+h5 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(1.1rem, 2vw, 1.25rem);
+  font-weight: 600;
+  line-height: 1.35;
+  color: var(--color-foreground);
+  margin-bottom: 0.5rem;
+}
+
+h6 {
+  font-family: var(--font-space-grotesk);
+  font-size: clamp(1rem, 1.5vw, 1.125rem);
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--color-foreground);
+  margin-bottom: 0.5rem;
+}
+
+p {
+  font-family: var(--font-inter);
+  font-size: clamp(0.95rem, 1.2vw, 1.05rem);
+  line-height: 1.6;
+  color: var(--color-foreground);
+  margin-bottom: 1rem;
+}
+
+/* Selection Styling */
+::selection {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+::-moz-selection {
+  background-color: var(--color-primary);
+  color: var(--color-background);
+}
+
+/* Links */
+a {
+  color: var(--color-primary);
+  text-decoration: none;
+  transition: color 0.2s ease;
+}
+
+a:hover {
+  color: var(--color-primary-dim);
+}
+
+/* Focus states */
+button:focus,
+a:focus,
+input:focus,
+textarea:focus,
+select:focus {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
+}
+
+/* Scrollbar Styling */
+::-webkit-scrollbar {
+  width: 10px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--color-background);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--color-border);
+  border-radius: 5px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--color-muted);
+}
+
+/* Tailwind Directives */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
