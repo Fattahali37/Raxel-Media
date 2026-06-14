@@ -53,63 +53,79 @@ export function WhyRaxel() {
   const containerTriggerRef = useRef<HTMLDivElement>(null);
   const progressBarRef = useRef<HTMLDivElement>(null);
 
- useEffect(() => {
-  if (!scrollTrackRef.current || !containerTriggerRef.current) return;
+  useEffect(() => {
+    if (!scrollTrackRef.current || !containerTriggerRef.current) return;
 
-  const mm = gsap.matchMedia();
+    const mm = gsap.matchMedia();
 
-  mm.add("(min-width: 768px)", () => {
-    const track = scrollTrackRef.current!;
-    const totalWidth = track.scrollWidth;
-    const windowWidth = window.innerWidth;
+    mm.add("(min-width: 768px)", () => {
+      const track = scrollTrackRef.current!;
+      const container = containerTriggerRef.current!;
+      
+      const updateTimeline = () => {
+        const totalWidth = track.scrollWidth;
+        const windowWidth = window.innerWidth;
+        
+        // Exact dynamic distance to move the track completely left
+        const xTranslation = -(totalWidth - windowWidth + 64);
+        
+        // SCROLL PACE MULTIPLIER: Allocates enough vertical scroll distance to let the pacing feel smooth
+        const scrollPacingFactor = 1.5;
+        const scrollDistance = Math.abs(xTranslation) * scrollPacingFactor;
 
-    const xTranslation = -(totalWidth - windowWidth);
+        // Clear previous ScrollTriggers for recalculation
+        ScrollTrigger.getAll().forEach(t => {
+          if (t.trigger === container) t.kill();
+        });
 
-    const scrollTween = gsap.to(track, {
-      x: xTranslation,
-      ease: "none",
-      scrollTrigger: {
-        trigger: containerTriggerRef.current,
-        pin: true,
-        scrub: 1,
-        start: "top top",
-        end: () => `+=${totalWidth - windowWidth}`,
-        invalidateOnRefresh: true,
-      },
+        // 1. Core Card Glide Tween
+        gsap.fromTo(track, 
+          { x: 0 },
+          {
+            x: xTranslation,
+            ease: "none",
+            scrollTrigger: {
+              trigger: container,
+              pin: true,
+              scrub: 1,
+              start: "top top",
+              end: () => `+=${scrollDistance}`,
+              invalidateOnRefresh: true,
+            },
+          }
+        );
+
+        // 2. Micro Status Progress Fill Track
+        gsap.fromTo(progressBarRef.current,
+          { scaleX: 0 },
+          {
+            scaleX: 1,
+            ease: "none",
+            transformOrigin: "left center",
+            scrollTrigger: {
+              trigger: container,
+              scrub: 1,
+              start: "top top",
+              end: () => `+=${scrollDistance}`,
+            },
+          }
+        );
+      };
+
+      // Initial run + setup resize tracking safety loops
+      updateTimeline();
+      ScrollTrigger.addEventListener("refreshInit", updateTimeline);
+
+      return () => {
+        ScrollTrigger.removeEventListener("refreshInit", updateTimeline);
+        ScrollTrigger.getAll().forEach(t => {
+          if (t.trigger === container) t.kill();
+        });
+      };
     });
 
-    gsap.to(progressBarRef.current, {
-      scaleX: 1,
-      ease: "none",
-      transformOrigin: "left center",
-      scrollTrigger: {
-        trigger: containerTriggerRef.current,
-        scrub: 1,
-        start: "top top",
-        end: () => `+=${totalWidth - windowWidth}`,
-      },
-    });
-
-    return () => {
-      scrollTween.scrollTrigger?.kill();
-
-      ScrollTrigger.getAll().forEach((trigger) => {
-        if (trigger.trigger === containerTriggerRef.current) {
-          trigger.kill();
-        }
-      });
-    };
-  });
-
-  const handleResize = () => ScrollTrigger.refresh();
-
-  window.addEventListener("resize", handleResize);
-
-  return () => {
-    window.removeEventListener("resize", handleResize);
-    mm.revert();
-  };
-}, []);
+    return () => mm.revert();
+  }, []);
 
   return (
     <section 
@@ -133,23 +149,17 @@ export function WhyRaxel() {
           </h2>
         </div>
         <p className="text-xs font-mono text-muted-foreground/40 max-w-xs md:text-right uppercase tracking-wider">
-          // [SCROLL_TRACKER] SCRUB TIMELINE FOR AUDIT LOGIC
+          // [SCROLL_TIMELINE] ACCELERATING CONVERSION ARCS
         </p>
       </div>
 
       {/* Horizontal Strip Container view wrapper */}
       <div className="w-full relative flex items-center overflow-x-auto md:overflow-x-visible pb-6 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none px-4 md:px-0">
         
-        {/* Absolute dynamic center "Playback Head" laser node line (Only Desktop viewports) */}
-        <div className="absolute left-1/2 top-[-40px] bottom-[-40px] w-[1px] bg-primary/20 z-20 pointer-events-none hidden md:block">
-          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_#0fbf6a]" />
-          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_#0fbf6a]" />
-        </div>
-
         {/* Moving filmstrip runway track */}
         <div 
           ref={scrollTrackRef} 
-          className="flex gap-5 md:gap-6 pl-0 md:pl-[max(2rem,calc((100vw-80rem)/2))] pr-4 md:pr-[25vw] will-change-transform"
+          className="flex gap-5 md:gap-6 pl-0 md:pl-[max(2rem,calc((100vw-80rem)/2))] pr-4 md:pr-[10vw] will-change-transform"
         >
           {FEATURES.map((feature) => {
             const Icon = feature.icon;
