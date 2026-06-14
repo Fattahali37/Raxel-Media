@@ -2,7 +2,7 @@
 
 import { useEffect, useRef } from 'react';
 import { motion } from 'framer-motion';
-import { Flame, TrendingUp } from 'lucide-react';
+import { BarChart3, ShieldCheck } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import type { Variants } from 'framer-motion';
 
@@ -51,13 +51,6 @@ export function Hero() {
       blob.style.animation = 'blob-float 15s ease-in-out infinite';
     }
   }, []);
-
-  // const scrollToNext = () => {
-  //   const nextSection = document.getElementById('services');
-  //   if (nextSection) {
-  //     nextSection.scrollIntoView({ behavior: 'smooth' });
-  //   }
-  // };
 
   return (
     <section className="relative min-h-screen bg-background text-foreground overflow-hidden flex items-center">
@@ -179,34 +172,34 @@ export function Hero() {
             </motion.div>
           </motion.div>
 
-          {/* Corrected Right Side - Floating Ad Engine Stack */}
+          {/* Redesigned Right Side - Premium Strategic Asset Showcase */}
           <div className="lg:col-span-5 relative w-full h-[480px] lg:h-[580px] flex items-center justify-center mt-8 lg:mt-0">
 
             {/* Contextual Ambient Light Flare */}
-            <div className="absolute w-[350px] h-[350px] bg-primary/10 rounded-full blur-[80px] pointer-events-none z-0" />
+            <div className="absolute w-[350px] h-[350px] bg-primary/5 rounded-full blur-[90px] pointer-events-none z-0" />
 
-            {/* Card 1: Top Right - Shifted further right/up to prevent device overlapping */}
+            {/* Card 1: Top Right - High-Ticket Scale Value Badge */}
             <motion.div
               initial={{ opacity: 0, x: 50, y: -30 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.8, delay: 0.6 }}
-              className="absolute top-4 -right-2 sm:right-0 lg:-right-6 z-30 bg-surface/80 border border-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-[0_20px_50px_rgba(0,0,0,0.4)] flex items-center gap-3.5 max-w-[210px]"
+              className="absolute top-4 -right-2 sm:right-0 lg:-right-6 z-30 bg-surface/90 border border-white/10 backdrop-blur-xl rounded-2xl p-4 shadow-[0_25px_50px_rgba(0,0,0,0.5)] flex items-center gap-3.5 max-w-[220px]"
             >
               <div className="w-9 h-9 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center text-primary flex-shrink-0">
-                <TrendingUp className="w-4 h-4 drop-shadow-[0_0_6px_#0fbf6a]" />
+                <BarChart3 className="w-4 h-4 text-primary drop-shadow-[0_0_4px_#0fbf6a]" />
               </div>
               <div>
-                <p className="text-[9px] font-mono tracking-widest text-primary font-bold uppercase">// SCALE_STABLE</p>
-                <p className="text-lg font-bold font-space-grotesk text-foreground leading-tight">+184% ROAS</p>
+                <p className="text-[9px] font-mono tracking-widest text-muted font-bold uppercase">// SCALE_VELOCITY</p>
+                <p className="text-base font-bold font-space-grotesk text-foreground leading-tight">3.4x Avg ROAS</p>
               </div>
             </motion.div>
 
-            {/* Card 2: Core Center - Normalized padding context */}
+            {/* Card 2: Core Center Asset Window */}
             <motion.div
               initial={{ opacity: 0, scale: 0.94, y: 10 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
               transition={{ duration: 1, ease: [0.16, 1, 0.3, 1], delay: 0.4 }}
-              className="relative w-[280px] sm:w-[320px] h-[390px] sm:h-[430px] bg-surface/10 border border-white/5 rounded-[32px] overflow-hidden shadow-[0_0_60px_rgba(0,0,0,0.7)] backdrop-blur-md z-20 group hover:border-primary/30 transition-all duration-500"
+              className="relative w-[280px] sm:w-[320px] h-[390px] sm:h-[430px] bg-surface/5 border border-white/10 rounded-[28px] overflow-hidden shadow-[0_40px_80px_rgba(0,0,0,0.8)] backdrop-blur-md z-20 group transition-all duration-500"
               style={{
                 animation: 'card-float 6s ease-in-out infinite alternate',
               }}
@@ -217,81 +210,58 @@ export function Hero() {
                 muted
                 loop
                 playsInline
-                className="absolute inset-0 w-full h-full object-cover z-0 opacity-70 mix-blend-screen transition-opacity duration-500 group-hover:opacity-90"
+                className="absolute inset-0 w-full h-full object-cover z-0 opacity-60 transition-opacity duration-500 group-hover:opacity-80"
                 poster="/videos/showreel-placeholder.jpg"
               >
                 <source src="/videos/hero-showreel.mp4" type="video/mp4" />
               </video>
 
-              {/* Protective Dark Overlays */}
-              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/10 to-transparent z-10 pointer-events-none" />
-              <div className="absolute inset-0 bg-neutral-950/30 mix-blend-multiply pointer-events-none z-10" />
+              {/* Protective Elegant Shadow Overlay */}
+              <div className="absolute inset-0 bg-gradient-to-t from-background via-background/20 to-transparent z-10 pointer-events-none" />
 
-              {/* Top scanning HUD asset processing line */}
-              <div className="absolute top-0 left-0 right-0 h-[2px] bg-primary/40 shadow-[0_0_10px_#0fbf6a] z-20" />
-
-              {/* Lower HUD Meta Labels */}
-              <div className="absolute inset-x-0 bottom-0 p-6 z-20 space-y-2.5">
-                <div className="inline-flex items-center gap-2 px-2.5 py-1 rounded-full bg-black/70 border border-white/10 text-[9px] font-mono font-bold text-primary backdrop-blur-md">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary animate-ping" />
-                  HYPER_MOTION_ENG_V2.MP4
+              <div className="absolute inset-x-0 bottom-0 p-6 z-20 space-y-2">
+                <div className="inline-flex items-center gap-1.5 text-[9px] font-mono font-bold tracking-wider text-primary/90 uppercase">
+                  <span className="w-1 h-1 rounded-full bg-primary" />
+                  CASE_STUDY_REF_04
                 </div>
-                <h4 className="font-space-grotesk font-bold text-base text-white leading-snug drop-shadow-md">
-                  Angle #04: Direct Retention Hook Strategy
+                <h4 className="font-space-grotesk font-semibold text-base text-white leading-snug drop-shadow-md">
+                  High-Conversion Capital Scaling Architecture
                 </h4>
               </div>
             </motion.div>
 
-            {/* Card 3: Bottom Left - Lifted upward and pushed wider to clear footer elements */}
+            {/* Card 3: Bottom Left - Capital Efficiency Diagnostics Bar */}
             <motion.div
               initial={{ opacity: 0, x: -50, y: 40 }}
               animate={{ opacity: 1, x: 0, y: 0 }}
               transition={{ duration: 0.8, delay: 0.8 }}
-              className="absolute bottom-4 -left-2 sm:left-0 lg:-left-8 z-30 bg-surface/70 border border-white/10 backdrop-blur-xl rounded-2xl p-4.5 shadow-[0_20px_50px_rgba(0,0,0,0.5)] w-[230px] space-y-3 hidden sm:block"
+              className="absolute bottom-4 -left-2 sm:left-0 lg:-left-8 z-30 bg-surface/80 border border-white/10 backdrop-blur-xl rounded-2xl p-4.5 shadow-[0_25px_50px_rgba(0,0,0,0.5)] w-[230px] space-y-3 hidden sm:block"
               style={{
                 animation: 'card-float 5s ease-in-out infinite alternate-reverse',
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[9px] font-mono font-bold tracking-widest text-muted uppercase">// ENGAGEMENT</span>
-                <Flame className="w-3.5 h-3.5 text-primary drop-shadow-[0_0_4px_#0fbf6a]" />
+                <span className="text-[9px] font-mono font-bold tracking-widest text-muted uppercase">// EFFICIENCY_INDEX</span>
+                <ShieldCheck className="w-3.5 h-3.5 text-primary drop-shadow-[0_0_4px_#0fbf6a]" />
               </div>
               <div className="space-y-1.5">
-                <div className="h-1.5 w-full bg-white/10 rounded-full overflow-hidden">
+                <div className="h-1.5 w-full bg-white/5 rounded-full overflow-hidden">
                   <motion.div
                     initial={{ width: 0 }}
-                    animate={{ width: "74.8%" }}
+                    animate={{ width: "92%" }}
                     transition={{ duration: 1.2, delay: 1.4, ease: "easeOut" }}
-                    className="h-full bg-primary shadow-[0_0_8px_#0fbf6a]"
+                    className="h-full bg-primary/90 shadow-[0_0_8px_rgba(15,191,106,0.4)]"
                   />
                 </div>
                 <div className="flex justify-between text-[10px] font-mono text-muted">
-                  <span>Avg. Hook Rate</span>
-                  <span className="text-foreground font-bold font-sans">74.8%</span>
+                  <span>Wasted Spend Reduction</span>
+                  <span className="text-primary font-bold font-sans">-40% CPA</span>
                 </div>
               </div>
             </motion.div>
 
           </div>
         </div>
-
-        {/* Bottom Page Scroll Indicator Anchor */}
-        {/* <div className="absolute bottom-6 left-1/2 -translate-x-1/2">
-          <motion.button
-            onClick={scrollToNext}
-            animate={{ y: [0, 6, 0] }}
-            transition={{
-              duration: 2,
-              ease: 'easeInOut',
-              repeat: Infinity,
-            }}
-            className="flex flex-col items-center gap-1.5 text-muted hover:text-primary transition-colors duration-300 group"
-            aria-label="Scroll to next section"
-          >
-            <span className="text-[10px] uppercase tracking-[0.2em] font-bold font-mono text-muted/50 group-hover:text-primary transition-colors">Scroll</span>
-            <ChevronDown className="w-4 h-4 text-primary" strokeWidth={2.5} />
-          </motion.button>
-        </div> */}
       </div>
 
       <style jsx>{`
