@@ -1,10 +1,11 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
+import { motion } from 'framer-motion';
 import gsap from 'gsap';
 import { ScrollTrigger } from 'gsap/ScrollTrigger';
-import { cn } from '@/lib/utils';
 
+// Register GSAP plugin
 if (typeof window !== 'undefined') {
   gsap.registerPlugin(ScrollTrigger);
 }
@@ -18,90 +19,247 @@ interface ProcessStep {
 const PROCESS_STEPS: ProcessStep[] = [
   {
     number: '01',
-    title: 'Deconstruct',
+    title: 'Discovery Call',
     description:
-      'We dissect your brand, audience, and market objections down to the emotional core. No guessing — pure psychological mapping.',
+      'We dig into your brand, offer, audience, and current creative performance.',
   },
   {
     number: '02',
-    title: 'Engineer',
+    title: 'Strategy & Scripting',
     description:
-      'Every script is built with a 3-second hook, benefit-driven body, and frictionless CTA. Designed to stop the scroll and start the sale.',
+      'Our team builds psychology-driven scripts mapped to your funnel stage.',
   },
   {
     number: '03',
-    title: 'Produce',
+    title: 'Production',
     description:
-      'Cinematic, premium production using cutting-edge AI and UGC talent — delivered fast, tested constantly, scaled relentlessly.',
+      'Cinematic shoot or AI-powered production, depending on your speed and budget needs.',
+  },
+  {
+    number: '04',
+    title: 'Delivery & Iteration',
+    description:
+      'You get ready-to-launch assets, plus ongoing testing recommendations.',
   },
 ];
 
+/**
+ * Timeline Line Component
+ * Animates downward as user scrolls through the section
+ */
+function TimelineLine({ sectionRef }: { sectionRef: React.RefObject<HTMLElement> }) {
+  const svgRef = useRef<SVGSVGElement>(null);
+  const lineRef = useRef<SVGLineElement>(null);
+
+  useEffect(() => {
+    if (!svgRef.current || !lineRef.current || !sectionRef.current) return;
+
+    const ctx = gsap.context(() => {
+      const line = lineRef.current;
+      if (!line) return;
+
+      const totalLength = line.getTotalLength();
+
+      gsap.fromTo(
+        line,
+        { strokeDashoffset: totalLength },
+        {
+          strokeDashoffset: 0,
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top center',
+            end: 'bottom center',
+            scrub: 1, // Smooth scrubbing, synced to scroll
+            markers: false,
+          },
+        }
+      );
+    }, svgRef);
+
+    return () => ctx.revert();
+  }, [sectionRef]);
+
+  return (
+    <svg
+      ref={svgRef}
+      className="absolute left-0 top-0 w-1 h-full"
+      style={{
+        left: 'calc(50% - 1px)',
+      }}
+      preserveAspectRatio="none"
+      viewBox="0 0 2 1000"
+      width="2"
+    >
+      <line
+        ref={lineRef}
+        x1="1"
+        y1="0"
+        x2="1"
+        y2="1000"
+        stroke="url(#timelineGradient)"
+        strokeWidth="2"
+        strokeDasharray="1000"
+        strokeDashoffset="1000"
+      />
+      <defs>
+        <linearGradient
+          id="timelineGradient"
+          x1="0%"
+          y1="0%"
+          x2="0%"
+          y2="100%"
+        >
+          <stop offset="0%" stopColor="rgba(15, 191, 106, 0)" />
+          <stop offset="50%" stopColor="rgba(15, 191, 106, 0.6)" />
+          <stop offset="100%" stopColor="rgba(15, 191, 106, 0)" />
+        </linearGradient>
+      </defs>
+    </svg>
+  );
+}
+
+/**
+ * Timeline Step Circle Component
+ */
+interface StepCircleProps {
+  number: string;
+  isActive: boolean;
+}
+
+function StepCircle({ number, isActive }: StepCircleProps) {
+  return (
+    <motion.div
+      animate={isActive ? { scale: [1, 1.1, 1], borderColor: '#0FBF6A' } : {}}
+      transition={{
+        scale: {
+          duration: 0.6,
+          repeat: isActive ? 2 : 0,
+          ease: 'easeInOut',
+        },
+        borderColor: {
+          duration: 0.3,
+        },
+      }}
+      className={`absolute left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full flex items-center justify-center border-2 font-bold font-space-grotesk text-lg bg-surface transition-all duration-300 ${
+        isActive ? 'border-primary text-primary' : 'border-border text-foreground'
+      }`}
+    >
+      {number}
+    </motion.div>
+  );
+}
+
+/**
+ * Timeline Step Card Component
+ */
+interface StepCardProps {
+  step: ProcessStep;
+  isLeft: boolean;
+}
+
+function StepCard({ step, isLeft }: StepCardProps) {
+  const cardRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!cardRef.current) return;
+
+    gsap.fromTo(
+      cardRef.current,
+      {
+        opacity: 0,
+        x: isLeft ? -60 : 60,
+      },
+      {
+        opacity: 1,
+        x: 0,
+        duration: 0.8,
+        ease: 'power3.out',
+        scrollTrigger: {
+          trigger: cardRef.current,
+          start: 'top 80%',
+          toggleActions: 'play none none reverse',
+        },
+      }
+    );
+  }, [isLeft]);
+
+  return (
+    <motion.div
+      ref={cardRef}
+      className={`flex ${isLeft ? 'lg:flex-row-reverse' : ''} items-center gap-8 lg:gap-12`}
+    >
+      {/* Content Card */}
+      <div
+        className={`flex-1 ${
+          isLeft ? 'lg:text-right' : ''
+        } bg-surface border border-border rounded-2xl p-8 transition-all duration-300 hover:border-primary hover:shadow-lg hover:shadow-primary/10`}
+      >
+        <h3 className="text-2xl font-bold font-space-grotesk text-foreground mb-4">
+          {step.title}
+        </h3>
+        <p className="text-base text-muted leading-relaxed">
+          {step.description}
+        </p>
+      </div>
+
+      {/* Spacer for circle positioning (visual balance) */}
+      <div className="hidden lg:block w-24 flex-shrink-0" />
+    </motion.div>
+  );
+}
+
+/**
+ * Process Section Component
+ */
 export function Process() {
   const sectionRef = useRef<HTMLElement>(null);
   const headlineRef = useRef<HTMLDivElement>(null);
-  const cardsContainerRef = useRef<HTMLDivElement>(null);
+  const stepsRef = useRef<HTMLDivElement>(null);
   const [activeStep, setActiveStep] = useState<number | null>(null);
 
   useEffect(() => {
-    if (!sectionRef.current) return;
+    if (!sectionRef.current || !headlineRef.current) return;
 
     const ctx = gsap.context(() => {
-      if (headlineRef.current) {
-        gsap.fromTo(
-          headlineRef.current,
-          { opacity: 0, y: 30 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            ease: 'power3.out',
-            scrollTrigger: {
-              trigger: sectionRef.current,
-              start: 'top 75%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-      }
-
-      if (cardsContainerRef.current) {
-        const cards = cardsContainerRef.current.querySelectorAll('.process-card');
-
-        gsap.fromTo(
-          cards,
-          { opacity: 0, y: 40 },
-          {
-            opacity: 1,
-            y: 0,
-            duration: 0.8,
-            stagger: 0.15,
-            ease: 'power2.out',
-            scrollTrigger: {
-              trigger: cardsContainerRef.current,
-              start: 'top 70%',
-              toggleActions: 'play none none reverse',
-            },
-          }
-        );
-
-        ScrollTrigger.create({
-          trigger: cardsContainerRef.current,
-          start: 'top 60%',
-          end: 'bottom 40%',
-          onUpdate: (self) => {
-            const p = self.progress;
-            if (p <= 0.1) {
-              setActiveStep(null);
-            } else if (p > 0.1 && p <= 0.45) {
-              setActiveStep(0);
-            } else if (p > 0.45 && p <= 0.8) {
-              setActiveStep(1);
-            } else if (p > 0.8) {
-              setActiveStep(2);
-            }
+      // Animate headline
+      gsap.fromTo(
+        headlineRef.current,
+        { opacity: 0, y: 30 },
+        {
+          opacity: 1,
+          y: 0,
+          duration: 0.8,
+          ease: 'power3.out',
+          scrollTrigger: {
+            trigger: sectionRef.current,
+            start: 'top 70%',
+            toggleActions: 'play none none reverse',
           },
-          onLeave: () => setActiveStep(null),
-          onLeaveBack: () => setActiveStep(null)
+        }
+      );
+
+      // Animate step circles when they come into view
+      if (stepsRef.current) {
+        const stepElements = stepsRef.current.querySelectorAll('[data-step-index]');
+        stepElements.forEach((el, idx) => {
+          gsap.fromTo(
+            el,
+            { scale: 0.8 },
+            {
+              scale: 1,
+              duration: 0.5,
+              ease: 'back.out',
+              scrollTrigger: {
+                trigger: el,
+                start: 'center 80%',
+                once: false,
+                onEnter: () => setActiveStep(idx),
+                onLeave: () => setActiveStep(null),
+                onEnterBack: () => setActiveStep(idx),
+                onLeaveBack: () => setActiveStep(null),
+              },
+            }
+          );
         });
       }
     }, sectionRef);
@@ -112,87 +270,81 @@ export function Process() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
+      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background"
     >
+      {/* Background accent */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.04) 0%, transparent 60%)`,
+          background: `radial-gradient(circle at 20% 50%, rgba(15, 191, 106, 0.08) 0%, transparent 50%)`,
         }}
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div ref={headlineRef} className="mb-16 space-y-3">
-          <div className="text-xs uppercase tracking-[0.2em] text-primary font-bold font-mono">
-            THE RAXEL METHOD™
+      <div className="relative z-10 max-w-5xl mx-auto">
+        {/* Header */}
+        <div className="mb-20 text-center">
+          <div className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">
+            HOW WE WORK
           </div>
-          <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-[1.15] tracking-tight max-w-4xl">
-            A Creative System Built On Data, Psychology, and Relentless Iteration.
-          </h2>
+
+          <div ref={headlineRef}>
+            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-tight">
+              From Brief To Breakthrough
+            </h2>
+          </div>
         </div>
 
-        <div
-          ref={cardsContainerRef}
-          className="grid grid-cols-1 md:grid-cols-3 gap-6 lg:gap-8 items-stretch"
-        >
-          {PROCESS_STEPS.map((step, index) => {
-            const isActive = activeStep === index;
+        {/* Timeline Container */}
+        <div ref={stepsRef} className="relative">
+          {/* Timeline Line - Desktop only */}
+          <div className="hidden lg:block">
+            <TimelineLine sectionRef={sectionRef} />
+          </div>
 
-            return (
-              <div
-                key={step.number}
-                className={cn(
-                  "process-card relative p-8 rounded-2xl border transition-all duration-500 backdrop-blur-md flex flex-col justify-between min-h-[320px]",
-                  isActive
-                    ? "bg-surface/40 border-primary/40 shadow-[0_0_50px_rgba(15,191,106,0.08)] scale-[1.02]"
-                    : "bg-surface/20 border-white/5 shadow-xl hover:border-white/10"
-                )}
-              >
-                <div className="space-y-6">
-                  <div className="flex items-center justify-between">
-                    <span className={cn(
-                      "text-3xl font-bold font-space-grotesk tracking-tight transition-colors duration-500",
-                      isActive ? "text-primary" : "text-primary/60"
-                    )}>
-                      {step.number}
-                    </span>
-                    <span className={cn(
-                      "text-sm font-mono tracking-wider transition-opacity duration-500",
-                      isActive ? "text-primary opacity-100" : "text-muted opacity-0"
-                    )}>
-                      // ACTIVE_PHASE
-                    </span>
+          {/* Mobile Timeline Line */}
+          <div className="lg:hidden absolute left-8 top-0 bottom-0 w-0.5 bg-gradient-to-b from-primary/0 via-primary/60 to-primary/0" />
+
+          {/* Steps */}
+          <div className="space-y-16 lg:space-y-24">
+            {PROCESS_STEPS.map((step, index) => {
+              const isLeft = index % 2 === 0;
+              const isActive = activeStep === index;
+
+              return (
+                <div
+                  key={step.number}
+                  data-step-index={index}
+                  className="relative"
+                >
+                  {/* Desktop: Step Circle on timeline */}
+                  <div className="hidden lg:block">
+                    <StepCircle number={step.number} isActive={isActive} />
                   </div>
 
-                  <div className="space-y-3">
-                    <h3 className={cn(
-                      "text-2xl font-bold font-space-grotesk transition-colors duration-500",
-                      isActive ? "text-primary" : "text-foreground/90"
-                    )}>
-                      {step.title}
-                    </h3>
-                    <p className="text-sm text-muted leading-relaxed font-normal">
-                      {step.description}
-                    </p>
+                  {/* Mobile: Step Circle on left */}
+                  <div className="lg:hidden absolute left-0 top-0 w-16 h-16 rounded-full flex items-center justify-center border-2 border-border bg-surface font-bold font-space-grotesk text-lg text-foreground">
+                    {step.number}
+                  </div>
+
+                  {/* Content with offset for mobile circle */}
+                  <div className="lg:block pl-28 lg:pl-0">
+                    <StepCard
+                      step={step}
+                      isLeft={isLeft}
+                    />
                   </div>
                 </div>
-
-                <div className="pt-6 mt-auto">
-                  <div className={cn(
-                    "w-full h-[1px] transition-all duration-700 origin-left",
-                    isActive ? "bg-primary scale-x-100 shadow-[0_0_8px_#0fbf6a]" : "bg-white/5 scale-x-50"
-                  )} />
-                </div>
-              </div>
-            );
-          })}
+              );
+            })}
+          </div>
         </div>
       </div>
 
+      {/* Grain texture */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-[0.02] mix-blend-overlay"
+        className="absolute inset-0 pointer-events-none opacity-20"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.75' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
         }}
       />
     </section>

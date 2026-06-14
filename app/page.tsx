@@ -4,7 +4,7 @@ import { PageLoader } from '@/components/loader';
 import { Hero } from '@/components/sections/hero';
 import { TrustBar } from '@/components/sections/trust-bar';
 import { Problem } from '@/components/sections/problem';
-// import { Method } from '@/components/sections/method';
+import { Method } from '@/components/sections/method';
 import { Services } from '@/components/sections/services';
 import { Process } from '@/components/sections/process';
 // import { Results } from '@/components/sections/results';
@@ -25,7 +25,7 @@ export default function Home() {
 
       <TrustBar />
       <Problem />
-      {/* <Method /> */}
+      <Method />
 
       {/* Target for 'Services' navbar button */}
       <div id="services">
