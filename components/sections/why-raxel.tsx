@@ -1,14 +1,8 @@
 'use client';
 
-import { useEffect, useRef } from 'react';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
+import { useLayoutEffect, useRef, useCallback } from 'react';
+import Lenis from 'lenis';
 import { Zap, Brain, Target, BarChart3, LucideIcon } from 'lucide-react';
-
-// Register GSAP plugin
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
 
 interface Feature {
   number: string;
@@ -21,198 +15,257 @@ const FEATURES: Feature[] = [
   {
     number: '01',
     title: 'Speed',
-    description: 'Production timelines that outpace traditional agencies by 3-5x',
+    description: 'Production timelines that outpace traditional agencies by 3-5x.',
     icon: Zap,
   },
   {
     number: '02',
     title: 'Psychology-First',
-    description:
-      'Every script is rooted in conversion psychology, not creative ego',
+    description: 'Every script is rooted in conversion psychology, not creative ego.',
     icon: Brain,
   },
   {
     number: '03',
     title: 'Full-Funnel Thinking',
-    description:
-      'We don&apos;t just make ads, we engineer assets that move metrics',
+    description: 'We don\'t just make ads, we engineer assets that move metrics.',
     icon: Target,
   },
   {
     number: '04',
     title: 'Transparent Reporting',
-    description: 'You&apos;ll always know what&apos;s working and why',
+    description: 'You\'ll always know exactly what\'s working and why.',
     icon: BarChart3,
   },
 ];
 
-/**
- * Feature Row Component
- */
-interface FeatureRowProps {
-  feature: Feature;
-  index: number;
+// ============================================================================
+// SPLIT SCROLL STACK ENGINE
+// ============================================================================
+interface ScrollStackProps {
+  children: React.ReactNode;
+  itemDistance?: number;
+  itemScale?: number;
+  itemStackDistance?: number;
+  stackPosition?: string;
+  scaleEndPosition?: string;
+  baseScale?: number;
+  blurAmount?: number;
 }
 
-function FeatureRow({ feature, index }: FeatureRowProps) {
-  const rowRef = useRef<HTMLDivElement>(null);
-  const isLeft = index % 2 === 0;
-  const Icon = feature.icon;
+function SplitScrollStack({
+  children,
+  itemDistance = 40, // Tighter margin between items to reduce height
+  itemScale = 0.02,
+  itemStackDistance = 20, // Lowered stack distance to keep it compact
+  stackPosition = '30%',
+  scaleEndPosition = '15%',
+  baseScale = 0.92,
+  blurAmount = 1.5
+}: ScrollStackProps) {
+  const containerRef = useRef<HTMLDivElement>(null);
+  const cardsRef = useRef<HTMLElement[]>([]);
+  const animationFrameRef = useRef<number | null>(null);
+  const lenisRef = useRef<Lenis | null>(null);
 
-  useEffect(() => {
-    if (!rowRef.current) return;
+  const calculateProgress = useCallback((scrollTop: number, start: number, end: number) => {
+    if (scrollTop < start) return 0;
+    if (scrollTop > end) return 1;
+    return (scrollTop - start) / (end - start);
+  }, []);
 
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        rowRef.current,
-        {
-          opacity: 0,
-          x: isLeft ? -100 : 100,
-        },
-        {
-          opacity: 1,
-          x: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: rowRef.current,
-            start: 'top 80%',
-            toggleActions: 'play none none reverse',
-          },
+  const parsePercentage = useCallback((value: string, containerHeight: number) => {
+    if (value.includes('%')) {
+      return (parseFloat(value) / 100) * containerHeight;
+    }
+    return parseFloat(value);
+  }, []);
+
+  const updateTransforms = useCallback(() => {
+    if (!cardsRef.current.length || !containerRef.current) return;
+
+    const scrollTop = window.scrollY;
+    const containerHeight = window.innerHeight;
+    const rect = containerRef.current.getBoundingClientRect();
+    const containerOffsetTop = rect.top + scrollTop;
+
+    const stackPositionPx = parsePercentage(stackPosition, containerHeight);
+    const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
+
+    const endElement = containerRef.current.querySelector('.scroll-stack-end') as HTMLElement;
+    const endElementTop = endElement ? (endElement.getBoundingClientRect().top + scrollTop) : 0;
+
+    cardsRef.current.forEach((card, i) => {
+      if (!card) return;
+
+      const cardTop = containerOffsetTop + (card as any)._initialOffsetTop;
+      const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
+      const triggerEnd = cardTop - scaleEndPositionPx;
+      const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
+      const pinEnd = endElementTop - containerHeight / 2;
+
+      const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
+      const targetScale = baseScale + i * itemScale;
+      const scale = 1 - scaleProgress * (1 - targetScale);
+
+      let blur = 0;
+      if (blurAmount) {
+        let topCardIndex = 0;
+        for (let j = 0; j < cardsRef.current.length; j++) {
+          const jCardTop = containerOffsetTop + (cardsRef.current[j] as any)._initialOffsetTop;
+          const jTriggerStart = jCardTop - stackPositionPx - itemStackDistance * j;
+          if (scrollTop >= jTriggerStart) {
+            topCardIndex = j;
+          }
         }
-      );
-    }, rowRef);
+        if (i < topCardIndex) {
+          blur = Math.max(0, (topCardIndex - i) * blurAmount);
+        }
+      }
 
-    return () => ctx.revert();
-  }, [isLeft]);
+      let translateY = 0;
+      if (scrollTop >= pinStart && scrollTop <= pinEnd) {
+        translateY = scrollTop - cardTop + stackPositionPx + itemStackDistance * i;
+      } else if (scrollTop > pinEnd) {
+        translateY = pinEnd - cardTop + stackPositionPx + itemStackDistance * i;
+      }
+
+      card.style.transform = `translate3d(0, ${Math.round(translateY * 100) / 100}px, 0) scale(${Math.round(scale * 1000) / 1000})`;
+      card.style.filter = blur > 0 ? `blur(${Math.round(blur * 100) / 100}px)` : '';
+    });
+  }, [itemScale, itemStackDistance, stackPosition, scaleEndPosition, baseScale, blurAmount, calculateProgress, parsePercentage]);
+
+  useLayoutEffect(() => {
+    if (!containerRef.current) return;
+
+    const cards = Array.from(containerRef.current.querySelectorAll('.scroll-stack-card')) as HTMLElement[];
+    cardsRef.current = cards;
+
+    cards.forEach((card, i) => {
+      (card as any)._initialOffsetTop = card.offsetTop;
+      if (i < cards.length - 1) {
+        card.style.marginBottom = `${itemDistance}px`;
+      }
+    });
+
+    const lenis = new Lenis({
+      autoRaf: false,
+      duration: 1.2,
+      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+      smoothWheel: true,
+    });
+
+    lenis.on('scroll', updateTransforms);
+
+    const raf = (time: number) => {
+      lenis.raf(time);
+      animationFrameRef.current = requestAnimationFrame(raf);
+    };
+    animationFrameRef.current = requestAnimationFrame(raf);
+    lenisRef.current = lenis;
+
+    updateTransforms();
+
+    return () => {
+      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
+      if (lenisRef.current) lenisRef.current.destroy();
+    };
+  }, [itemDistance, updateTransforms]);
 
   return (
-    <div
-      ref={rowRef}
-      className={`grid grid-cols-1 md:grid-cols-2 gap-12 lg:gap-24 items-center`}
-    >
-      {/* Left Column - Icon and Number */}
-      {isLeft ? (
-        <div className="flex flex-col items-center md:items-start space-y-6">
-          {/* Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <Icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
-          </div>
-
-          {/* Large faded number */}
-          <div
-            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-10 leading-none"
-            aria-hidden="true"
-          >
-            {feature.number}
-          </div>
-        </div>
-      ) : null}
-
-      {/* Right Column - Text Content */}
-      <div
-        className={`space-y-6 ${isLeft ? '' : 'md:order-first'}`}
-      >
-        <h3 className="text-4xl md:text-5xl font-bold font-space-grotesk text-foreground">
-          {feature.title}
-        </h3>
-        <p className="text-lg md:text-xl text-muted leading-relaxed max-w-lg">
-          {feature.description}
-        </p>
+    <div ref={containerRef} className="w-full">
+      <div className="scroll-stack-inner pb-12">
+        {children}
+        <div className="scroll-stack-end w-full h-px" />
       </div>
-
-      {/* Right Column - Icon and Number (if not left) */}
-      {!isLeft ? (
-        <div className="flex flex-col items-center md:items-start space-y-6">
-          {/* Icon */}
-          <div className="w-16 h-16 rounded-2xl bg-primary/10 flex items-center justify-center">
-            <Icon className="w-8 h-8 text-primary" strokeWidth={1.5} />
-          </div>
-
-          {/* Large faded number */}
-          <div
-            className="text-8xl md:text-9xl font-bold font-space-grotesk text-primary opacity-10 leading-none"
-            aria-hidden="true"
-          >
-            {feature.number}
-          </div>
-        </div>
-      ) : null}
     </div>
   );
 }
 
-/**
- * Why Raxel Section Component
- */
+// ============================================================================
+// REDESIGNED MAIN SPLIT FEATURE COMPONENT
+// ============================================================================
 export function WhyRaxel() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
-
-  useEffect(() => {
-    if (!sectionRef.current || !headlineRef.current) return;
-
-    const ctx = gsap.context(() => {
-      gsap.fromTo(
-        headlineRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
-
   return (
-    <section
-      ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background"
-    >
-      {/* Background accent */}
+    <section className="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
+      {/* Background Spotlight Ring */}
       <div
         className="absolute inset-0 pointer-events-none"
         style={{
-          background: `radial-gradient(circle at 80% 50%, rgba(15, 191, 106, 0.08) 0%, transparent 50%)`,
+          background: `radial-gradient(circle at 75% 50%, rgba(15, 191, 106, 0.03) 0%, transparent 60%)`,
         }}
       />
 
-      <div className="relative z-10 max-w-6xl mx-auto">
-        {/* Header */}
-        <div className="mb-20 lg:mb-32">
-          <div className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">
-            WHY RAXEL
-          </div>
+      <div className="relative z-10 max-w-7xl mx-auto">
+        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
 
-          <div ref={headlineRef}>
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-tight">
+          {/* LEFT SIDE: Sticky Header Section */}
+          <div className="lg:col-span-5 lg:sticky lg:top-[35vh] space-y-4 text-center lg:text-left pr-0 lg:pr-8">
+            <span className="text-xs font-bold tracking-[0.25em] uppercase text-primary font-mono block">
+              WHY RAXEL
+            </span>
+            <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold font-space-grotesk text-white leading-[1.1] tracking-tight">
               Why Brands Choose Raxel Media
             </h2>
           </div>
-        </div>
 
-        {/* Features */}
-        <div className="space-y-24 lg:space-y-32">
-          {FEATURES.map((feature, index) => (
-            <FeatureRow key={feature.number} feature={feature} index={index} />
-          ))}
+          {/* RIGHT SIDE: Compact Card Stack */}
+          <div className="lg:col-span-7 w-full">
+            <SplitScrollStack
+              itemDistance={48}
+              itemStackDistance={24}
+              baseScale={0.93}
+              itemScale={0.02}
+              blurAmount={1}
+              stackPosition="30%"
+              scaleEndPosition="15%"
+            >
+              {FEATURES.map((feature) => {
+                const Icon = feature.icon;
+                return (
+                  <div
+                    key={feature.number}
+                    className="scroll-stack-card relative w-full p-6 sm:p-8 border border-white/5 rounded-2xl bg-[#0d0d0d]/95 backdrop-blur-xl shadow-[0_-20px_40px_rgba(0,0,0,0.8)] box-border origin-top flex items-center justify-between gap-6 group transition-colors duration-300 hover:border-primary/20"
+                    style={{ backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' }}
+                  >
+                    {/* Content Frame */}
+                    <div className="flex gap-5 items-start sm:items-center">
+                      {/* Responsive Mini Glowing Icon Box */}
+                      <div className="w-12 h-12 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:scale-110">
+                        <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
+                      </div>
+
+                      {/* Description Copy */}
+                      <div className="space-y-1">
+                        <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-white">
+                          {feature.title}
+                        </h3>
+                        <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed font-sans max-w-md">
+                          {feature.description}
+                        </p>
+                      </div>
+                    </div>
+
+                    {/* Faded Watermark Side Index */}
+                    <div
+                      className="text-4xl sm:text-5xl font-bold font-space-grotesk text-primary opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 leading-none select-none pointer-events-none"
+                      aria-hidden="true"
+                    >
+                      {feature.number}
+                    </div>
+                  </div>
+                );
+              })}
+            </SplitScrollStack>
+          </div>
+
         </div>
       </div>
 
-      {/* Grain texture */}
+      {/* Subtle Analog Grain Overlay */}
       <div
-        className="absolute inset-0 pointer-events-none opacity-20"
+        className="absolute inset-0 pointer-events-none opacity-15"
         style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E")`,
         }}
       />
     </section>
