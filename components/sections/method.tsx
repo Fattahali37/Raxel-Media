@@ -1,14 +1,7 @@
 'use client';
 
 import { useEffect, useRef, useState } from 'react';
-import { motion } from 'framer-motion';
-import gsap from 'gsap';
-import { ScrollTrigger } from 'gsap/ScrollTrigger';
-
-// Register GSAP plugin
-if (typeof window !== 'undefined') {
-  gsap.registerPlugin(ScrollTrigger);
-}
+import { motion, useScroll, useTransform } from 'framer-motion';
 
 const STEPS = [
   {
@@ -31,9 +24,6 @@ const STEPS = [
   },
 ];
 
-/**
- * Method Card Component with 3D tilt and hover effects
- */
 interface MethodCardProps {
   step: (typeof STEPS)[0];
   index: number;
@@ -50,11 +40,10 @@ function MethodCard({ step, index }: MethodCardProps) {
     const x = e.clientX - rect.left;
     const y = e.clientY - rect.top;
 
-    // Calculate rotation based on mouse position
     const centerX = rect.width / 2;
     const centerY = rect.height / 2;
-    const rotateX = ((y - centerY) / centerY) * 5; // Max 5 degrees
-    const rotateY = ((centerX - x) / centerX) * 5; // Max 5 degrees
+    const rotateX = ((y - centerY) / centerY) * -4; // Inverted for natural tilt feel
+    const rotateY = ((centerX - x) / centerX) * 4;
 
     setTilt({ rotateX, rotateY });
   };
@@ -66,283 +55,128 @@ function MethodCard({ step, index }: MethodCardProps) {
   return (
     <motion.div
       ref={cardRef}
-      initial={{ opacity: 0, y: 40 }}
+      initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
       transition={{
-        duration: 0.8,
+        duration: 0.7,
         delay: index * 0.15,
-        ease: [0.25, 0.46, 0.45, 0.94],
+        ease: [0.215, 0.61, 0.355, 1],
       }}
-      viewport={{ once: true, margin: '-100px' }}
-      whileHover={{
-        y: -8,
-        transition: { duration: 0.3 },
-      }}
+      viewport={{ once: true, margin: '-60px' }}
+      whileHover={{ y: -6 }}
       onMouseMove={handleMouseMove}
       onMouseLeave={handleMouseLeave}
       className="group relative h-full"
-      style={{
-        perspective: '1000px',
-      }}
+      style={{ perspective: '1200px' }}
     >
       <motion.div
         animate={tilt}
-        transition={{ type: 'spring', stiffness: 400, damping: 30 }}
-        style={{
-          transformStyle: 'preserve-3d' as const,
-        }}
-        className="relative h-full bg-surface border border-border rounded-2xl p-8 overflow-hidden transition-all duration-300 hover:border-primary cursor-pointer"
+        transition={{ type: 'spring', stiffness: 350, damping: 25 }}
+        style={{ transformStyle: 'preserve-3d' }}
+        className="relative h-full bg-[#0d0d0d] border border-white/5 rounded-2xl p-8 overflow-hidden transition-colors duration-300 hover:border-primary/40 cursor-pointer"
       >
-        {/* Large faded number watermark */}
+        {/* Large faded watermark positioned perfectly */}
         <div
-          className="absolute top-8 right-8 opacity-5 group-hover:opacity-15 transition-opacity duration-300"
+          className="absolute bottom-[-20px] right-2 opacity-[0.03] group-hover:opacity-[0.07] transition-opacity duration-500 font-bold font-space-grotesk pointer-events-none select-none tracking-tighter text-white"
           style={{
-            fontSize: '280px',
-            lineHeight: '1',
-            fontWeight: 'bold',
-            fontFamily: 'var(--font-space-grotesk)',
-            color: 'var(--color-primary)',
-            userSelect: 'none',
-            pointerEvents: 'none',
-            transform: 'translateZ(0)',
+            fontSize: '180px',
+            lineHeight: '0.8',
+            transform: 'translateZ(10px)',
           }}
         >
           {step.number}
         </div>
 
-        {/* Content */}
-        <div className="relative z-10 space-y-4 h-full flex flex-col">
-          {/* Step number and title */}
-          <div className="flex items-baseline gap-4">
-            <span className="text-5xl font-bold font-space-grotesk text-primary">
+        {/* Card Content Structure */}
+        <div className="relative z-10 space-y-4 h-full flex flex-col" style={{ transform: 'translateZ(20px)' }}>
+          <div className="flex items-center gap-3">
+            <span className="text-2xl font-bold font-space-grotesk text-primary">
               {step.number}
             </span>
-            <h3 className="text-2xl font-bold font-space-grotesk text-foreground">
+            <h3 className="text-xl font-bold font-space-grotesk text-white">
               {step.title}
             </h3>
           </div>
 
-          {/* Description */}
-          <p className="text-base text-muted leading-relaxed flex-grow">
+          <p className="text-sm sm:text-base text-muted-foreground/80 leading-relaxed flex-grow font-sans">
             {step.description}
           </p>
 
-          {/* Arrow indicator on hover */}
-          <div className="pt-4 text-primary opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <div className="pt-2 text-primary opacity-0 group-hover:opacity-100 transition-all duration-300 transform translate-x-[-4px] group-hover:translate-x-0">
             <svg
-              className="w-6 h-6 transform group-hover:translate-x-2 transition-transform duration-300"
+              className="w-5 h-5"
               fill="none"
               stroke="currentColor"
+              strokeWidth={2}
               viewBox="0 0 24 24"
             >
-              <path
-                strokeLinecap="round"
-                strokeLinejoin="round"
-                strokeWidth={2}
-                d="M13 7l5 5m0 0l-5 5m5-5H6"
-              />
+              <path strokeLinecap="round" strokeLinejoin="round" d="M14 5l7 7m0 0l-7 7m7-7H3" />
             </svg>
           </div>
         </div>
 
-        {/* Hover glow effect */}
-        <div
-          className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-          style={{
-            boxShadow:
-              'inset 0 0 20px rgba(15, 191, 106, 0.1), 0 0 30px rgba(15, 191, 106, 0.05)',
-          }}
-        />
+        {/* Interior Micro-Glow Canvas */}
+        <div className="absolute inset-0 rounded-2xl pointer-events-none opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-[radial-gradient(circle_at_center,rgba(15,191,106,0.06)_0%,transparent_70%)]" />
       </motion.div>
     </motion.div>
   );
 }
 
-/**
- * Connecting Line Component with animated dot/arrow
- */
-function ConnectingLine() {
-  const svgRef = useRef<SVGSVGElement>(null);
-  const pathRef = useRef<SVGPathElement>(null);
-  const dotRef = useRef<SVGCircleElement>(null);
-
-  useEffect(() => {
-    if (!svgRef.current || !pathRef.current || !dotRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Animate the line drawing with stroke-dashoffset
-      const path = pathRef.current;
-      const initialLength = path?.getTotalLength() || 0;
-
-      gsap.fromTo(
-        path,
-        { strokeDashoffset: initialLength },
-        {
-          strokeDashoffset: 0,
-          duration: 1.5,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: svgRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-
-      // Animate the dot along the path
-      gsap.to(
-        dotRef.current,
-        {
-          attr: {
-            cx: 600, // Endpoint of the line
-          },
-          duration: 1.5,
-          ease: 'power2.inOut',
-          scrollTrigger: {
-            trigger: svgRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    }, svgRef);
-
-    return () => ctx.revert();
-  }, []);
-
-  return (
-    <svg
-      ref={svgRef}
-      className="absolute top-1/2 left-0 right-0 w-full h-20 pointer-events-none"
-      style={{
-        transform: 'translateY(-50%)',
-        overflow: 'visible',
-      }}
-      preserveAspectRatio="none"
-      viewBox="0 0 600 20"
-    >
-      {/* Main connecting line */}
-      <path
-        ref={pathRef}
-        d="M 0 10 L 600 10"
-        stroke="url(#lineGradient)"
-        strokeWidth="2"
-        fill="none"
-        strokeDasharray="600"
-        strokeDashoffset="600"
-      />
-
-      {/* Animated dot/circle */}
-      <circle
-        ref={dotRef}
-        cx="0"
-        cy="10"
-        r="4"
-        fill="var(--color-primary)"
-        filter="url(#dotGlow)"
-      />
-
-      {/* Arrow at the end */}
-      <defs>
-        <linearGradient id="lineGradient" x1="0%" y1="0%" x2="100%" y2="0%">
-          <stop offset="0%" stopColor="rgba(15, 191, 106, 0)" />
-          <stop offset="50%" stopColor="rgba(15, 191, 106, 0.8)" />
-          <stop offset="100%" stopColor="rgba(15, 191, 106, 0.3)" />
-        </linearGradient>
-        <filter id="dotGlow">
-          <feGaussianBlur stdDeviation="2" result="coloredBlur" />
-          <feMerge>
-            <feMergeNode in="coloredBlur" />
-            <feMergeNode in="SourceGraphic" />
-          </feMerge>
-        </filter>
-      </defs>
-    </svg>
-  );
-}
-
-/**
- * Raxel Method Section Component
- */
 export function Method() {
-  const sectionRef = useRef<HTMLElement>(null);
-  const headlineRef = useRef<HTMLDivElement>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
+  
+  // Clean Framer Motion Scroll Trigger tracking across the block context
+  const { scrollYProgress } = useScroll({
+    target: containerRef,
+    offset: ["start end", "end start"]
+  });
 
-  useEffect(() => {
-    if (!sectionRef.current || !headlineRef.current) return;
-
-    const ctx = gsap.context(() => {
-      // Animate headline on scroll
-      gsap.fromTo(
-        headlineRef.current,
-        { opacity: 0, y: 30 },
-        {
-          opacity: 1,
-          y: 0,
-          duration: 0.8,
-          ease: 'power3.out',
-          scrollTrigger: {
-            trigger: sectionRef.current,
-            start: 'top 70%',
-            toggleActions: 'play none none reverse',
-          },
-        }
-      );
-    }, sectionRef);
-
-    return () => ctx.revert();
-  }, []);
+  const lineWidth = useTransform(scrollYProgress, [0.3, 0.55], ["0%", "100%"]);
+  const dotX = useTransform(scrollYProgress, [0.3, 0.55], ["0%", "100%"]);
 
   return (
-    <section
-      ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background"
-    >
-      {/* Background accent */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 15% 70%, rgba(15, 191, 106, 0.08) 0%, transparent 50%)`,
-        }}
-      />
+    <section className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
+      {/* Background Atmosphere Matrix */}
+      <div className="absolute inset-0 bg-[radial-gradient(circle_at_20%_30%,rgba(15,191,106,0.03)_0%,transparent_50%)] pointer-events-none" />
 
       <div className="relative z-10 max-w-7xl mx-auto">
-        {/* Header */}
-        <div className="mb-16 lg:mb-24">
-          <div className="text-xs uppercase tracking-widest text-primary font-semibold mb-4">
+        
+        {/* Header Block Layout */}
+        <div className="mb-16 lg:mb-24 space-y-4 max-w-5xl">
+          <span className="text-xs font-bold tracking-[0.25em] uppercase text-primary font-mono block">
             THE RAXEL METHOD™
-          </div>
-
-          <div ref={headlineRef} className="space-y-4">
-            <h2 className="text-4xl sm:text-5xl lg:text-6xl font-bold font-space-grotesk text-foreground leading-tight">
-              A Creative System Built On Data, Psychology, and Relentless Iteration.
-            </h2>
-          </div>
+          </span>
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-bold font-space-grotesk text-white leading-[1.15] tracking-tight">
+            A Creative System Built On Data, Psychology, and Relentless Iteration.
+          </h2>
         </div>
 
-        {/* Cards Container */}
-        <div className="relative">
-          {/* Connecting line - Desktop only */}
-          <div className="hidden lg:block">
-            <ConnectingLine />
+        {/* Interactive Processing Grid Context */}
+        <div ref={containerRef} className="relative">
+          
+          {/* Responsive Tracking Connecting Line */}
+          <div className="hidden lg:block absolute top-[44px] left-[5%] right-[5%] h-[1px] bg-white/5 z-0">
+            {/* Fluid Active Animated Line Track */}
+            <motion.div 
+              style={{ width: lineWidth }} 
+              className="h-full bg-gradient-to-r from-transparent via-primary/80 to-primary/30 relative"
+            >
+              {/* Pulse Engine Particle Anchor */}
+              <motion.div 
+                style={{ left: dotX }}
+                className="absolute right-0 top-1/2 -translate-y-1/2 w-1.5 h-1.5 rounded-full bg-primary shadow-[0_0_10px_#0fbf6a]"
+              />
+            </motion.div>
           </div>
 
           {/* Cards Grid */}
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-12">
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 lg:gap-10 relative z-10">
             {STEPS.map((step, index) => (
               <MethodCard key={step.number} step={step} index={index} />
             ))}
           </div>
         </div>
       </div>
-
-      {/* Grain texture */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-20"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.08'/%3E%3C/svg%3E")`,
-        }}
-      />
     </section>
   );
 }
