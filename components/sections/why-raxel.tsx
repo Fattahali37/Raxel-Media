@@ -1,273 +1,209 @@
 'use client';
 
-import { useLayoutEffect, useRef, useCallback } from 'react';
-import Lenis from 'lenis';
+import { useEffect, useRef } from 'react';
+import gsap from 'gsap';
+import { ScrollTrigger } from 'gsap/ScrollTrigger';
 import { Zap, Brain, Target, BarChart3, LucideIcon } from 'lucide-react';
+
+if (typeof window !== 'undefined') {
+  gsap.registerPlugin(ScrollTrigger);
+}
 
 interface Feature {
   number: string;
   title: string;
   description: string;
   icon: LucideIcon;
+  tag: string;
 }
 
 const FEATURES: Feature[] = [
   {
     number: '01',
-    title: 'Speed',
-    description: 'Production timelines that outpace traditional agencies by 3-5x.',
+    title: 'Speed Execution',
+    description: 'Production workflows calibrated to outpace sluggish legacy agencies by 3-5x without compromising structural premium quality.',
     icon: Zap,
+    tag: 'VELOCITY_LOGIC'
   },
   {
     number: '02',
-    title: 'Psychology-First',
-    description: 'Every script is rooted in conversion psychology, not creative ego.',
+    title: 'Psychology-First Frameworks',
+    description: 'Every conceptual narrative hook and visual angle is engineered explicitly around quantitative conversion psychology patterns.',
     icon: Brain,
+    tag: 'PSYCH_HOOK_V1'
   },
   {
     number: '03',
-    title: 'Full-Funnel Thinking',
-    description: 'We don\'t just make ads, we engineer assets that move metrics.',
+    title: 'Full-Funnel Infrastructure',
+    description: 'We don\'t produce isolated creative assets. We design conversion architectures targeted down to sub-demographic user actions.',
     icon: Target,
+    tag: 'FUNNEL_ENG.MOV'
   },
   {
     number: '04',
-    title: 'Transparent Reporting',
-    description: 'You\'ll always know exactly what\'s working and why.',
+    title: 'Granular Reporting Loops',
+    description: 'Complete pipeline tracking loops. Pinpoint exactly what structural variants won, which underperformed, and how we intend to scale them.',
     icon: BarChart3,
+    tag: 'ROI_STREAM_ANALYTICS'
   },
 ];
 
-// ============================================================================
-// SPLIT SCROLL STACK ENGINE
-// ============================================================================
-interface ScrollStackProps {
-  children: React.ReactNode;
-  itemDistance?: number;
-  itemScale?: number;
-  itemStackDistance?: number;
-  stackPosition?: string;
-  scaleEndPosition?: string;
-  baseScale?: number;
-  blurAmount?: number;
-}
+export function WhyRaxel() {
+  const scrollTrackRef = useRef<HTMLDivElement>(null);
+  const containerTriggerRef = useRef<HTMLDivElement>(null);
+  const progressBarRef = useRef<HTMLDivElement>(null);
 
-function SplitScrollStack({
-  children,
-  itemDistance = 40, // Tighter margin between items to reduce height
-  itemScale = 0.02,
-  itemStackDistance = 20, // Lowered stack distance to keep it compact
-  stackPosition = '30%',
-  scaleEndPosition = '15%',
-  baseScale = 0.92,
-  blurAmount = 1.5
-}: ScrollStackProps) {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const cardsRef = useRef<HTMLElement[]>([]);
-  const animationFrameRef = useRef<number | null>(null);
-  const lenisRef = useRef<Lenis | null>(null);
+ useEffect(() => {
+  if (!scrollTrackRef.current || !containerTriggerRef.current) return;
 
-  const calculateProgress = useCallback((scrollTop: number, start: number, end: number) => {
-    if (scrollTop < start) return 0;
-    if (scrollTop > end) return 1;
-    return (scrollTop - start) / (end - start);
-  }, []);
+  const mm = gsap.matchMedia();
 
-  const parsePercentage = useCallback((value: string, containerHeight: number) => {
-    if (value.includes('%')) {
-      return (parseFloat(value) / 100) * containerHeight;
-    }
-    return parseFloat(value);
-  }, []);
+  mm.add("(min-width: 768px)", () => {
+    const track = scrollTrackRef.current!;
+    const totalWidth = track.scrollWidth;
+    const windowWidth = window.innerWidth;
 
-  const updateTransforms = useCallback(() => {
-    if (!cardsRef.current.length || !containerRef.current) return;
+    const xTranslation = -(totalWidth - windowWidth);
 
-    const scrollTop = window.scrollY;
-    const containerHeight = window.innerHeight;
-    const rect = containerRef.current.getBoundingClientRect();
-    const containerOffsetTop = rect.top + scrollTop;
-
-    const stackPositionPx = parsePercentage(stackPosition, containerHeight);
-    const scaleEndPositionPx = parsePercentage(scaleEndPosition, containerHeight);
-
-    const endElement = containerRef.current.querySelector('.scroll-stack-end') as HTMLElement;
-    const endElementTop = endElement ? (endElement.getBoundingClientRect().top + scrollTop) : 0;
-
-    cardsRef.current.forEach((card, i) => {
-      if (!card) return;
-
-      const cardTop = containerOffsetTop + (card as any)._initialOffsetTop;
-      const triggerStart = cardTop - stackPositionPx - itemStackDistance * i;
-      const triggerEnd = cardTop - scaleEndPositionPx;
-      const pinStart = cardTop - stackPositionPx - itemStackDistance * i;
-      const pinEnd = endElementTop - containerHeight / 2;
-
-      const scaleProgress = calculateProgress(scrollTop, triggerStart, triggerEnd);
-      const targetScale = baseScale + i * itemScale;
-      const scale = 1 - scaleProgress * (1 - targetScale);
-
-      let blur = 0;
-      if (blurAmount) {
-        let topCardIndex = 0;
-        for (let j = 0; j < cardsRef.current.length; j++) {
-          const jCardTop = containerOffsetTop + (cardsRef.current[j] as any)._initialOffsetTop;
-          const jTriggerStart = jCardTop - stackPositionPx - itemStackDistance * j;
-          if (scrollTop >= jTriggerStart) {
-            topCardIndex = j;
-          }
-        }
-        if (i < topCardIndex) {
-          blur = Math.max(0, (topCardIndex - i) * blurAmount);
-        }
-      }
-
-      let translateY = 0;
-      if (scrollTop >= pinStart && scrollTop <= pinEnd) {
-        translateY = scrollTop - cardTop + stackPositionPx + itemStackDistance * i;
-      } else if (scrollTop > pinEnd) {
-        translateY = pinEnd - cardTop + stackPositionPx + itemStackDistance * i;
-      }
-
-      card.style.transform = `translate3d(0, ${Math.round(translateY * 100) / 100}px, 0) scale(${Math.round(scale * 1000) / 1000})`;
-      card.style.filter = blur > 0 ? `blur(${Math.round(blur * 100) / 100}px)` : '';
-    });
-  }, [itemScale, itemStackDistance, stackPosition, scaleEndPosition, baseScale, blurAmount, calculateProgress, parsePercentage]);
-
-  useLayoutEffect(() => {
-    if (!containerRef.current) return;
-
-    const cards = Array.from(containerRef.current.querySelectorAll('.scroll-stack-card')) as HTMLElement[];
-    cardsRef.current = cards;
-
-    cards.forEach((card, i) => {
-      (card as any)._initialOffsetTop = card.offsetTop;
-      if (i < cards.length - 1) {
-        card.style.marginBottom = `${itemDistance}px`;
-      }
+    const scrollTween = gsap.to(track, {
+      x: xTranslation,
+      ease: "none",
+      scrollTrigger: {
+        trigger: containerTriggerRef.current,
+        pin: true,
+        scrub: 1,
+        start: "top top",
+        end: () => `+=${totalWidth - windowWidth}`,
+        invalidateOnRefresh: true,
+      },
     });
 
-    const lenis = new Lenis({
-      autoRaf: false,
-      duration: 1.2,
-      easing: t => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
-      smoothWheel: true,
+    gsap.to(progressBarRef.current, {
+      scaleX: 1,
+      ease: "none",
+      transformOrigin: "left center",
+      scrollTrigger: {
+        trigger: containerTriggerRef.current,
+        scrub: 1,
+        start: "top top",
+        end: () => `+=${totalWidth - windowWidth}`,
+      },
     });
-
-    lenis.on('scroll', updateTransforms);
-
-    const raf = (time: number) => {
-      lenis.raf(time);
-      animationFrameRef.current = requestAnimationFrame(raf);
-    };
-    animationFrameRef.current = requestAnimationFrame(raf);
-    lenisRef.current = lenis;
-
-    updateTransforms();
 
     return () => {
-      if (animationFrameRef.current) cancelAnimationFrame(animationFrameRef.current);
-      if (lenisRef.current) lenisRef.current.destroy();
+      scrollTween.scrollTrigger?.kill();
+
+      ScrollTrigger.getAll().forEach((trigger) => {
+        if (trigger.trigger === containerTriggerRef.current) {
+          trigger.kill();
+        }
+      });
     };
-  }, [itemDistance, updateTransforms]);
+  });
+
+  const handleResize = () => ScrollTrigger.refresh();
+
+  window.addEventListener("resize", handleResize);
+
+  return () => {
+    window.removeEventListener("resize", handleResize);
+    mm.revert();
+  };
+}, []);
 
   return (
-    <div ref={containerRef} className="w-full">
-      <div className="scroll-stack-inner pb-12">
-        {children}
-        <div className="scroll-stack-end w-full h-px" />
-      </div>
-    </div>
-  );
-}
-
-// ============================================================================
-// REDESIGNED MAIN SPLIT FEATURE COMPONENT
-// ============================================================================
-export function WhyRaxel() {
-  return (
-    <section className="relative py-20 lg:py-28 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden">
-      {/* Background Spotlight Ring */}
-      <div
-        className="absolute inset-0 pointer-events-none"
-        style={{
-          background: `radial-gradient(circle at 75% 50%, rgba(15, 191, 106, 0.03) 0%, transparent 60%)`,
-        }}
+    <section 
+      ref={containerTriggerRef} 
+      className="w-full h-auto md:h-screen bg-[#030303] overflow-x-hidden md:overflow-hidden flex flex-col justify-center relative py-20 md:py-0 select-none"
+    >
+      {/* Background Editor Pixel Ambient Grid */}
+      <div 
+        className="absolute inset-0 opacity-[0.015] pointer-events-none" 
+        style={{ backgroundImage: 'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)', backgroundSize: '50px 50px' }} 
       />
 
-      <div className="relative z-10 max-w-7xl mx-auto">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-12 lg:gap-8 items-start">
+      {/* Visual Editor Anchor Header Frame */}
+      <div className="w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 mb-10 md:mb-14 flex flex-col md:flex-row md:items-end justify-between gap-4 relative z-10">
+        <div className="space-y-2">
+          <span className="text-xs font-mono font-bold tracking-[0.3em] text-primary uppercase block">
+            THE RAXEL EDGE
+          </span>
+          <h2 className="text-4xl sm:text-5xl font-bold font-space-grotesk text-white tracking-tight leading-none">
+            Why Brands Scale With Us
+          </h2>
+        </div>
+        <p className="text-xs font-mono text-muted-foreground/40 max-w-xs md:text-right uppercase tracking-wider">
+          // [SCROLL_TRACKER] SCRUB TIMELINE FOR AUDIT LOGIC
+        </p>
+      </div>
 
-          {/* LEFT SIDE: Sticky Header Section */}
-          <div className="lg:col-span-5 lg:sticky lg:top-[35vh] space-y-4 text-center lg:text-left pr-0 lg:pr-8">
-            <span className="text-xs font-bold tracking-[0.25em] uppercase text-primary font-mono block">
-              WHY RAXEL
-            </span>
-            <h2 className="text-4xl sm:text-5xl lg:text-5xl font-bold font-space-grotesk text-white leading-[1.1] tracking-tight">
-              Why Brands Choose Raxel Media
-            </h2>
-          </div>
+      {/* Horizontal Strip Container view wrapper */}
+      <div className="w-full relative flex items-center overflow-x-auto md:overflow-x-visible pb-6 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none px-4 md:px-0">
+        
+        {/* Absolute dynamic center "Playback Head" laser node line (Only Desktop viewports) */}
+        <div className="absolute left-1/2 top-[-40px] bottom-[-40px] w-[1px] bg-primary/20 z-20 pointer-events-none hidden md:block">
+          <div className="absolute top-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_#0fbf6a]" />
+          <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary shadow-[0_0_15px_#0fbf6a]" />
+        </div>
 
-          {/* RIGHT SIDE: Compact Card Stack */}
-          <div className="lg:col-span-7 w-full">
-            <SplitScrollStack
-              itemDistance={48}
-              itemStackDistance={24}
-              baseScale={0.93}
-              itemScale={0.02}
-              blurAmount={1}
-              stackPosition="30%"
-              scaleEndPosition="15%"
-            >
-              {FEATURES.map((feature) => {
-                const Icon = feature.icon;
-                return (
-                  <div
-                    key={feature.number}
-                    className="scroll-stack-card relative w-full p-6 sm:p-8 border border-white/5 rounded-2xl bg-[#0d0d0d]/95 backdrop-blur-xl shadow-[0_-20px_40px_rgba(0,0,0,0.8)] box-border origin-top flex items-center justify-between gap-6 group transition-colors duration-300 hover:border-primary/20"
-                    style={{ backfaceVisibility: 'hidden', transformStyle: 'preserve-3d' }}
-                  >
-                    {/* Content Frame */}
-                    <div className="flex gap-5 items-start sm:items-center">
-                      {/* Responsive Mini Glowing Icon Box */}
-                      <div className="w-12 h-12 rounded-xl bg-primary/5 border border-primary/10 flex items-center justify-center flex-shrink-0 transition-transform duration-500 group-hover:scale-110">
-                        <Icon className="w-5 h-5 text-primary" strokeWidth={1.5} />
-                      </div>
-
-                      {/* Description Copy */}
-                      <div className="space-y-1">
-                        <h3 className="text-lg sm:text-xl font-bold font-space-grotesk text-white">
-                          {feature.title}
-                        </h3>
-                        <p className="text-xs sm:text-sm text-muted-foreground/80 leading-relaxed font-sans max-w-md">
-                          {feature.description}
-                        </p>
-                      </div>
-                    </div>
-
-                    {/* Faded Watermark Side Index */}
-                    <div
-                      className="text-4xl sm:text-5xl font-bold font-space-grotesk text-primary opacity-[0.03] group-hover:opacity-[0.08] transition-opacity duration-500 leading-none select-none pointer-events-none"
-                      aria-hidden="true"
-                    >
-                      {feature.number}
-                    </div>
+        {/* Moving filmstrip runway track */}
+        <div 
+          ref={scrollTrackRef} 
+          className="flex gap-5 md:gap-6 pl-0 md:pl-[max(2rem,calc((100vw-80rem)/2))] pr-4 md:pr-[25vw] will-change-transform"
+        >
+          {FEATURES.map((feature) => {
+            const Icon = feature.icon;
+            return (
+              <div
+                key={feature.number}
+                className="w-[calc(100vw-2rem)] sm:w-[400px] h-[350px] flex-shrink-0 border border-white/5 bg-[#080808]/50 backdrop-blur-xl rounded-2xl p-7 md:p-8 flex flex-col justify-between relative group hover:border-primary/20 transition-all duration-500 ease-out snap-center [perspective:1000px] hover:[transform:rotateX(2deg)_rotateY(-2deg)]"
+              >
+                {/* Film/Editor style Metadata horizontal bar */}
+                <div className="flex justify-between items-center border-b border-white/[0.04] pb-4">
+                  <div className="flex items-center gap-2.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
+                    <span className="text-[10px] font-mono text-muted-foreground/50 uppercase tracking-widest">
+                      {feature.tag}
+                    </span>
                   </div>
-                );
-              })}
-            </SplitScrollStack>
-          </div>
+                  <span className="text-xs font-mono text-white/15 group-hover:text-primary/40 transition-colors duration-500">
+                    //_{feature.number}
+                  </span>
+                </div>
 
+                {/* Primary Narrative Context Copy */}
+                <div className="space-y-4 my-auto">
+                  <div className="w-11 h-11 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-500 shadow-inner">
+                    <Icon className="w-5 h-5" strokeWidth={1.5} />
+                  </div>
+                  <h3 className="text-2xl font-bold font-space-grotesk text-white tracking-tight group-hover:text-primary/95 transition-colors duration-300">
+                    {feature.title}
+                  </h3>
+                  <p className="text-sm text-muted-foreground/70 leading-relaxed font-sans font-normal max-w-sm">
+                    {feature.description}
+                  </p>
+                </div>
+
+                {/* Fake Production Frame Data Readout */}
+                <div className="text-[10px] font-mono text-muted-foreground/20 flex justify-between pt-3 border-t border-white/[0.03]">
+                  <span className="group-hover:text-muted-foreground/40 transition-colors">FR_00{feature.number}0_RAX</span>
+                  <span>24_FPS_TC</span>
+                </div>
+              </div>
+            );
+          })}
         </div>
       </div>
 
-      {/* Subtle Analog Grain Overlay */}
-      <div
-        className="absolute inset-0 pointer-events-none opacity-15"
-        style={{
-          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 400 400' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='400' height='400' filter='url(%23noiseFilter)' opacity='0.06'/%3E%3C/svg%3E")`,
-        }}
-      />
+      {/* Embedded Render Progress Status Track Bar (Only visible Desktop viewports) */}
+      <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-7xl px-4 sm:px-6 lg:px-8 hidden md:block pointer-events-none">
+        <div className="w-full h-[2px] bg-white/[0.03] rounded-full relative overflow-hidden">
+          <div 
+            ref={progressBarRef} 
+            className="absolute left-0 top-0 bottom-0 w-full bg-gradient-to-r from-primary/30 to-primary origin-left will-change-transform shadow-[0_0_10px_#0fbf6a]" 
+          />
+        </div>
+      </div>
     </section>
   );
 }
