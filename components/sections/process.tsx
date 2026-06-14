@@ -80,7 +80,7 @@ export function Process() {
   }, []);
 
   return (
-    <section ref={containerRef} className="relative py-24 lg:py-36 px-4 sm:px-6 lg:px-8 bg-[#050505] overflow-hidden">
+    <section ref={containerRef} className="relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden border-b border-border/30">
       {/* Background Editor Grid lines */}
       <div 
         className="absolute inset-0 opacity-[0.015] pointer-events-none" 
@@ -127,7 +127,7 @@ export function Process() {
                       {step.tag}
                     </div>
                     <div className="flex items-center gap-3">
-                      <span className="text-sm font-mono text-muted-foreground/50">{step.number}.</span>
+                      <span className="text-sm font-mono" style={{ color: '#4a4a4a' }}>{step.number}.</span>
                       <h3 className="text-2xl font-bold font-space-grotesk text-white group-hover:text-primary transition-colors duration-300">
                         {step.title}
                       </h3>
@@ -136,10 +136,10 @@ export function Process() {
 
                   {/* Right Content Component Description Block */}
                   <div className="lg:col-span-8 p-6 sm:p-8 rounded-2xl border border-white/5 bg-[#0a0a0a]/80 backdrop-blur-md relative overflow-hidden flex items-start gap-5 transition-colors duration-300 group-hover:border-white/10">
-                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-300">
+                    <div className="p-3 rounded-xl bg-white/[0.02] border border-white/5 text-muted group-hover:text-primary group-hover:border-primary/20 transition-all duration-300">
                       <Icon className="w-5 h-5" strokeWidth={1.5} />
                     </div>
-                    <p className="text-sm sm:text-base text-muted-foreground/80 leading-relaxed font-sans pt-1 max-w-xl">
+                    <p className="text-sm sm:text-base leading-relaxed font-sans pt-1 max-w-xl" style={{ color: '#b0b0b0' }}>
                       {step.description}
                     </p>
                   </div>

@@ -45,54 +45,58 @@ export function FAQ() {
   };
 
   return (
-    <section className="w-full py-20 px-4 sm:px-6 lg:px-8 bg-[#030303]">
+    <section className="w-full py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30">
       <div className="max-w-3xl mx-auto">
         
         {/* Simple Semantic Header block */}
-        <div className="mb-12 text-center space-y-2">
-          <span className="text-xs font-mono font-bold tracking-widest text-primary uppercase">
+        <div className="mb-14 text-center space-y-3">
+          <span className="text-xs font-mono font-bold tracking-[0.25em] text-primary uppercase block">
             FAQ
           </span>
-          <h2 className="text-3xl sm:text-4xl font-bold font-space-grotesk text-white tracking-tight">
+          <h2 className="text-3xl sm:text-4xl font-bold font-space-grotesk text-foreground tracking-tight">
             Questions, Answered
           </h2>
         </div>
 
         {/* Clean Accordion List Array */}
-        <div className="border-t border-white/10 divide-y divide-white/10">
+        <div className="border-t border-border divide-y divide-border/60">
           {FAQ_ITEMS.map((item) => {
             const isOpen = openId === item.id;
 
             return (
-              <div key={item.id} className="py-5 block">
+              <div key={item.id} className="block">
                 <button
                   type="button"
                   onClick={() => toggleFAQ(item.id)}
-                  className="w-full flex items-center justify-between text-left group py-2"
+                  className="w-full flex items-center justify-between text-left group py-6"
                 >
                   <span className={`text-base sm:text-lg font-semibold tracking-tight font-space-grotesk transition-colors duration-200 ${
-                    isOpen ? 'text-primary' : 'text-white group-hover:text-primary'
+                    isOpen ? 'text-primary' : 'text-foreground group-hover:text-primary'
                   }`}>
                     {item.question}
                   </span>
                   
                   {/* Plus Icon turning into a Cross */}
-                  <Plus 
-                    className={`w-5 h-5 text-primary transition-transform duration-300 flex-shrink-0 ml-4 ${
-                      isOpen ? 'rotate-45' : 'rotate-0'
-                    }`} 
-                    strokeWidth={2}
-                  />
+                  <span className={`w-8 h-8 rounded-full border flex items-center justify-center flex-shrink-0 ml-4 transition-all duration-300 ${
+                    isOpen ? 'border-primary bg-primary/10' : 'border-border/60 group-hover:border-primary/50'
+                  }`}>
+                    <Plus 
+                      className={`w-4 h-4 text-primary transition-transform duration-300 ${
+                        isOpen ? 'rotate-45' : 'rotate-0'
+                      }`} 
+                      strokeWidth={2}
+                    />
+                  </span>
                 </button>
 
                 {/* Smooth Max Height Content Reveal Box */}
                 <div
                   className={`grid transition-all duration-300 ease-in-out overflow-hidden ${
-                    isOpen ? 'grid-rows-[1fr] opacity-100 mt-3' : 'grid-rows-[0fr] opacity-0'
+                    isOpen ? 'grid-rows-[1fr] opacity-100' : 'grid-rows-[0fr] opacity-0'
                   }`}
                 >
                   <div className="overflow-hidden">
-                    <p className="text-sm sm:text-base text-neutral-400 leading-relaxed max-w-2xl font-sans">
+                    <p className="text-base lg:text-lg leading-relaxed max-w-2xl font-sans pb-6" style={{ color: '#b0b0b0' }}>
                       {item.answer}
                     </p>
                   </div>

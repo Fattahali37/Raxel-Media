@@ -26,7 +26,7 @@ interface StatCounterProps {
 
 function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCounterProps) {
   const ref = useRef<HTMLDivElement>(null);
-  const isInView = useInView(ref, { once: true, margin: '-100px' });
+  const isInView = useInView(ref, { once: true, margin: '-50px' });
   const [displayValue, setDisplayValue] = useState('0');
 
   // Extract numeric value for animation
@@ -36,7 +36,6 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
     if (!isInView) return;
 
     let animationFrame: number;
-    let currentValue = 0;
     const targetValue = numericValue;
     const duration = 2; // 2 seconds
     const startTime = Date.now();
@@ -47,7 +46,7 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
 
       // Easing function: easeOut
       const easeProgress = 1 - Math.pow(1 - progress, 3);
-      currentValue = targetValue * easeProgress;
+      const currentValue = targetValue * easeProgress;
 
       // Format the display value
       const formatted = isDecimal
@@ -67,12 +66,12 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
   }, [isInView, numericValue, isDecimal]);
 
   return (
-    <div ref={ref} className="text-center space-y-2">
-      <div className="text-5xl sm:text-6xl font-bold font-space-grotesk text-primary">
+    <div ref={ref} className="text-center space-y-2 sm:space-y-3">
+      <div className="text-4xl sm:text-5xl md:text-6xl font-bold font-space-grotesk text-primary tracking-tight">
         {displayValue}
         {suffix}
       </div>
-      <p className="text-sm text-muted uppercase tracking-wide font-medium">
+      <p className="text-[10px] sm:text-xs md:text-sm text-muted uppercase tracking-widest font-semibold font-mono px-2 leading-snug">
         {label}
       </p>
     </div>
@@ -80,75 +79,51 @@ function StatCounter({ value, label, suffix = '', isDecimal = false }: StatCount
 }
 
 /**
- * Marquee Component with infinite scroll and fade edges
- */
-/**
  * Marquee Component with seamless infinite scroll and fade edges
  */
 function Marquee() {
-  // Triple the items or ensure they easily exceed 100vw total width
-  const marqueeContent = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
+  // Concat arrays to guarantee infinite looping background visual text stream coverage across ultra-wides
+  const duplicatedItems = [...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS, ...MARQUEE_ITEMS];
 
   return (
-    <div className="relative w-full overflow-hidden py-6">
+    <div className="relative w-full overflow-hidden py-4 sm:py-6 select-none">
       {/* Fade left edge */}
       <div
-        className="absolute left-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        className="absolute left-0 top-0 bottom-0 w-16 sm:w-24 z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to right, rgb(10, 10, 10), rgba(10, 10, 10, 0))',
+            'linear-gradient(to right, var(--background, rgb(10, 10, 10)), transparent)',
         }}
       />
 
       {/* Fade right edge */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-24 z-10 pointer-events-none"
+        className="absolute right-0 top-0 bottom-0 w-16 sm:w-24 z-10 pointer-events-none"
         style={{
           backgroundImage:
-            'linear-gradient(to left, rgb(10, 10, 10), rgba(10, 10, 10, 0))',
+            'linear-gradient(to left, var(--background, rgb(10, 10, 10)), transparent)',
         }}
       />
 
-      {/* Inner container establishing a non-restrictive layout */}
-      <div className="flex w-max">
-        {/* Animated track moving exactly by half its overall width */}
+      {/* Outer track wrapper */}
+      <div className="flex w-max overflow-hidden">
+        {/* Animated track slider line frame */}
         <motion.div
-          className="flex gap-16 pr-16 whitespace-nowrap motion-reduce:transform-none"
+          className="flex gap-12 sm:gap-16 pr-12 sm:pr-16 whitespace-nowrap motion-reduce:transform-none"
           animate={{ x: ['0%', '-50%'] }}
           transition={{
-            duration: 25, // Slightly faster for a cleaner glide
+            duration: 30,
             repeat: Infinity,
             ease: 'linear',
           }}
         >
-          {marqueeContent.map((item, index) => (
+          {duplicatedItems.map((item, index) => (
             <div
               key={index}
-              className="flex items-center gap-4 text-xs sm:text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
+              className="flex items-center gap-3 sm:gap-4 text-xs sm:text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
             >
               <span>{item}</span>
-              <span className="text-primary text-xs">{DIVIDER}</span>
-            </div>
-          ))}
-        </motion.div>
-
-        {/* Duplicate track to seamlessly append right behind the first one */}
-        <motion.div
-          className="flex gap-16 pr-16 whitespace-nowrap motion-reduce:transform-none"
-          animate={{ x: ['0%', '-50%'] }}
-          transition={{
-            duration: 25,
-            repeat: Infinity,
-            ease: 'linear',
-          }}
-        >
-          {marqueeContent.map((item, index) => (
-            <div
-              key={`dup-${index}`}
-              className="flex items-center gap-4 text-xs sm:text-sm uppercase tracking-widest text-muted font-medium font-space-grotesk flex-shrink-0"
-            >
-              <span>{item}</span>
-              <span className="text-primary text-xs">{DIVIDER}</span>
+              <span className="text-primary text-[10px] sm:text-xs">{DIVIDER}</span>
             </div>
           ))}
         </motion.div>
@@ -156,6 +131,7 @@ function Marquee() {
     </div>
   );
 }
+
 /**
  * Stats Grid Component with animated counters
  */
@@ -168,7 +144,7 @@ function StatsGrid() {
   ];
 
   return (
-    <div className="grid grid-cols-2 lg:grid-cols-4 gap-8 lg:gap-12">
+    <div className="grid grid-cols-2 lg:grid-cols-4 gap-x-4 gap-y-10 sm:gap-8 lg:gap-12 max-w-5xl mx-auto">
       {stats.map((stat, index) => (
         <StatCounter
           key={index}
@@ -188,12 +164,12 @@ function StatsGrid() {
  */
 export function TrustBar() {
   return (
-    <section className="relative bg-background border-y border-border">
+    <section className="relative w-full max-w-full bg-background border-y border-white/5 overflow-hidden">
       {/* Main Trust Bar */}
-      <div className="py-8 overflow-hidden">
+      <div className="py-6 sm:py-8 overflow-hidden">
         {/* Label */}
-        <div className="px-4 sm:px-6 lg:px-8 mb-6 text-center">
-          <p className="text-xs sm:text-sm uppercase tracking-widest text-muted font-medium">
+        <div className="px-4 sm:px-6 lg:px-8 mb-4 sm:mb-6 text-center">
+          <p className="text-[10px] sm:text-xs sm:text-sm uppercase tracking-widest text-muted font-bold font-mono">
             Trusted by DTC brands scaling past 7-figures
           </p>
         </div>
@@ -203,13 +179,13 @@ export function TrustBar() {
       </div>
 
       {/* Stats Grid Section */}
-      <div className="border-t border-border px-4 sm:px-6 lg:px-8 py-16 lg:py-20">
+      <div className="border-t border-white/5 px-4 sm:px-6 lg:px-8 py-16 sm:py-20 lg:py-28">
         <div className="max-w-7xl mx-auto">
-          <div className="mb-12 text-center">
-            <h2 className="text-3xl sm:text-4xl font-bold font-space-grotesk text-foreground mb-2">
+          <div className="mb-12 sm:mb-16 text-center space-y-2 sm:space-y-3">
+            <h2 className="text-3xl sm:text-4xl md:text-5xl font-bold font-space-grotesk tracking-tight text-foreground">
               Proven Results
             </h2>
-            <p className="text-muted text-base sm:text-lg">
+            <p className="text-sm sm:text-base md:text-lg text-muted max-w-xs mx-auto leading-relaxed font-sans">
               Our track record speaks for itself
             </p>
           </div>

@@ -116,7 +116,7 @@ function MethodCard({ step, isActive }: MethodCardProps) {
               </span>
             </div>
 
-            <p className="text-sm text-muted leading-relaxed font-normal">
+            <p className="text-sm leading-relaxed font-normal" style={{ color: '#b0b0b0' }}>
               {step.description}
             </p>
           </div>
@@ -257,7 +257,7 @@ export function Method() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
+      className="relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
     >
       <div
         className="absolute inset-0 pointer-events-none"

@@ -156,8 +156,9 @@ function ServiceCard({ service, index }: ServiceCardProps) {
           </h3>
 
           <p
-            className={`font-sans text-muted leading-relaxed transition-colors duration-500 ${service.featured ? 'text-base' : 'text-sm'
+            className={`font-sans leading-relaxed transition-colors duration-500 ${service.featured ? 'text-base' : 'text-sm'
               }`}
+            style={{ color: '#b0b0b0' }}
           >
             {service.description}
           </p>
@@ -217,7 +218,7 @@ export function Services() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
+      className="relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background border-b border-border/30 overflow-hidden"
     >
       <div
         className="absolute inset-0 pointer-events-none"

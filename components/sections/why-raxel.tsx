@@ -130,7 +130,7 @@ export function WhyRaxel() {
   return (
     <section 
       ref={containerTriggerRef} 
-      className="w-full h-auto md:h-screen bg-[#030303] overflow-x-hidden md:overflow-hidden flex flex-col justify-center relative py-20 md:py-0 select-none"
+      className="w-full h-auto md:h-screen bg-background overflow-x-hidden md:overflow-hidden flex flex-col justify-center relative py-20 md:py-0 select-none border-b border-border/30"
     >
       {/* Background Editor Pixel Ambient Grid */}
       <div 
@@ -148,7 +148,7 @@ export function WhyRaxel() {
             Why Brands Scale With Us
           </h2>
         </div>
-        <p className="text-xs font-mono text-muted-foreground/40 max-w-xs md:text-right uppercase tracking-wider">
+        <p className="text-xs font-mono max-w-xs md:text-right uppercase tracking-wider" style={{ color: '#3a3a3a' }}>
           // [SCROLL_TIMELINE] ACCELERATING CONVERSION ARCS
         </p>
       </div>
@@ -172,7 +172,7 @@ export function WhyRaxel() {
                 <div className="flex justify-between items-center border-b border-white/[0.04] pb-4">
                   <div className="flex items-center gap-2.5">
                     <span className="w-1.5 h-1.5 rounded-full bg-primary animate-pulse" />
-                    <span className="text-[10px] font-mono text-muted-foreground/50 uppercase tracking-widest">
+                    <span className="text-[10px] font-mono uppercase tracking-widest" style={{ color: '#5a5a5a' }}>
                       {feature.tag}
                     </span>
                   </div>
@@ -183,20 +183,20 @@ export function WhyRaxel() {
 
                 {/* Primary Narrative Context Copy */}
                 <div className="space-y-4 my-auto">
-                  <div className="w-11 h-11 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-muted-foreground group-hover:text-primary group-hover:border-primary/20 transition-all duration-500 shadow-inner">
+                  <div className="w-11 h-11 rounded-xl bg-white/[0.02] border border-white/5 flex items-center justify-center text-muted group-hover:text-primary group-hover:border-primary/20 transition-all duration-500 shadow-inner">
                     <Icon className="w-5 h-5" strokeWidth={1.5} />
                   </div>
                   <h3 className="text-2xl font-bold font-space-grotesk text-white tracking-tight group-hover:text-primary/95 transition-colors duration-300">
                     {feature.title}
                   </h3>
-                  <p className="text-sm text-muted-foreground/70 leading-relaxed font-sans font-normal max-w-sm">
+                  <p className="text-sm leading-relaxed font-sans font-normal max-w-sm" style={{ color: '#b0b0b0' }}>
                     {feature.description}
                   </p>
                 </div>
 
                 {/* Fake Production Frame Data Readout */}
-                <div className="text-[10px] font-mono text-muted-foreground/20 flex justify-between pt-3 border-t border-white/[0.03]">
-                  <span className="group-hover:text-muted-foreground/40 transition-colors">FR_00{feature.number}0_RAX</span>
+                <div className="text-[10px] font-mono flex justify-between pt-3 border-t border-white/[0.03]" style={{ color: '#2a2a2a' }}>
+                  <span className="group-hover:opacity-40 transition-opacity" style={{ color: '#3a3a3a' }}>FR_00{feature.number}0_RAX</span>
                   <span>24_FPS_TC</span>
                 </div>
               </div>

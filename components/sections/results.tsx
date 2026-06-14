@@ -239,20 +239,13 @@ export function Results() {
           {/* Scrollable Carousel */}
           <div
             ref={carouselRef}
-            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth"
+            className="flex gap-6 overflow-x-auto snap-x snap-mandatory scroll-smooth scrollbar-none"
             style={{
               scrollBehavior: 'smooth',
               WebkitOverflowScrolling: 'touch',
-              msOverflowStyle: 'none', // Hide scrollbar for IE and Edge
-              scrollbarWidth: 'none', // Hide scrollbar for Firefox
             }}
           >
-            {/* Hide scrollbar for Chrome, Safari and Opera */}
-            <style jsx>{`
-              div::-webkit-scrollbar {
-                display: none;
-              }
-            `}</style>
+            {/* scrollbar is hidden via .scrollbar-none in globals.css */}
 
             {CASE_STUDIES.map((study, index) => (
               <div key={study.id} className="snap-start scroll-ml-4">

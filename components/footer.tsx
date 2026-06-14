@@ -17,7 +17,7 @@ export function Footer() {
         if (entry.isIntersecting) {
           entry.target.querySelectorAll('[data-fade-in]').forEach((el, index) => {
             const elem = el as HTMLElement;
-            elem.style.animation = `fadeInUp 0.6s ease-out ${index * 0.1}s forwards`;
+            elem.style.animation = `fade-in-up 0.6s ease-out ${index * 0.1}s forwards`;
           });
         }
       },
@@ -35,18 +35,6 @@ export function Footer() {
       ref={footerRef}
       className="relative border-t border-border bg-background"
     >
-      <style jsx>{`
-        @keyframes fadeInUp {
-          from {
-            opacity: 0;
-            transform: translateY(20px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-      `}</style>
 
       {/* Main Footer Content */}
       <div className="px-4 sm:px-6 lg:px-8 py-16 lg:py-20">

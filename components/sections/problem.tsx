@@ -212,7 +212,7 @@ export function Problem() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-24 lg:py-32 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden border-b border-border/30"
+      className="relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden border-b border-border/30"
     >
       <div
         className="absolute inset-0 pointer-events-none"
@@ -238,7 +238,7 @@ export function Problem() {
               </h2>
             </div>
 
-            <div ref={bodyRef} className="space-y-6 text-base sm:text-lg text-muted leading-relaxed max-w-xl">
+            <div ref={bodyRef} className="space-y-6 text-base sm:text-lg leading-relaxed max-w-xl" style={{ color: '#b0b0b0' }}>
               <p>
                 Most brands are stuck running the same tired creative — generic hooks, stock-footage
                 vibes, and scripts that say everything and convince no one. Meanwhile, your

@@ -71,7 +71,7 @@ export function FinalCTA() {
   return (
     <section
       ref={sectionRef}
-      className="relative py-32 lg:py-40 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden"
+      className="relative py-28 lg:py-36 px-4 sm:px-6 lg:px-8 bg-background overflow-hidden"
     >
       {/* Animated gradient background */}
       <motion.div
@@ -85,8 +85,8 @@ export function FinalCTA() {
             position: 'absolute',
             inset: 0,
             background: `
-              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.22) 0%, transparent 50%),
-              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.1) 0%, transparent 70%)
+              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.18) 0%, transparent 50%),
+              radial-gradient(circle at 50% 50%, rgba(15, 191, 106, 0.08) 0%, transparent 70%)
             `,
             filter: 'blur(90px)',
             animation: 'pulse-glow 4s ease-in-out infinite',
@@ -99,7 +99,7 @@ export function FinalCTA() {
         {/* Headline */}
         <motion.h2
           ref={headlineRef}
-          className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk text-foreground leading-tight"
+          className="text-5xl sm:text-6xl lg:text-7xl font-bold font-space-grotesk text-foreground leading-tight tracking-tight"
         >
           Ready to Turn Your Ad Spend Into Profit?
         </motion.h2>
@@ -107,13 +107,14 @@ export function FinalCTA() {
         {/* Subheadline */}
         <p
           data-animate
-          className="text-lg sm:text-xl text-muted max-w-2xl mx-auto leading-relaxed"
+          className="text-lg sm:text-xl max-w-2xl mx-auto leading-relaxed"
+          style={{ color: '#b0b0b0' }}
         >
           Book a free strategy call and let&apos;s map out your next winning campaign.
         </p>
 
         {/* CTA Button */}
-        <div data-animate className="pt-8">
+        <div data-animate className="pt-6">
           <motion.button
             ref={buttonRef}
             whileHover={{ 
@@ -154,9 +155,9 @@ export function FinalCTA() {
         </div>
       </div>
 
-      {/* Animated elements around the button area */}
+      {/* Floating ambient rings */}
       <motion.div
-        className="absolute top-1/2 left-10 w-40 h-40 rounded-full border border-primary/20 pointer-events-none"
+        className="absolute top-1/2 left-10 w-40 h-40 rounded-full border border-primary/15 pointer-events-none"
         animate={{
           y: [0, -20, 0],
           scale: [1, 1.1, 1],
@@ -169,7 +170,7 @@ export function FinalCTA() {
       />
 
       <motion.div
-        className="absolute bottom-20 right-10 w-60 h-60 rounded-full border border-primary/10 pointer-events-none"
+        className="absolute bottom-20 right-10 w-60 h-60 rounded-full border border-primary/8 pointer-events-none"
         animate={{
           y: [0, 20, 0],
           scale: [1, 0.95, 1],
@@ -182,18 +183,7 @@ export function FinalCTA() {
         }}
       />
 
-      {/* Pulse glow keyframes */}
-      <style jsx>{`
-        @keyframes pulse-glow {
-          0%,
-          100% {
-            opacity: 0.08;
-          }
-          50% {
-            opacity: 0.15;
-          }
-        }
-      `}</style>
+      {/* pulse-glow keyframe is defined in globals.css */}
     </section>
   );
 }

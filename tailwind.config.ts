@@ -9,13 +9,14 @@ const config: Config = {
   theme: {
     extend: {
       colors: {
-        background: '#0A0A0A',
-        surface: '#121212',
-        primary: '#0FBF6A',
-        'primary-dim': '#0A8F4F',
-        foreground: '#F5F5F5',
-        muted: '#8A8A8A',
-        border: '#262626',
+        // Linked directly to your global CSS variables for a single source of truth
+        background: 'var(--color-background)',
+        surface: 'var(--color-surface)',
+        primary: 'var(--color-primary)',
+        'primary-dim': 'var(--color-primary-dim)',
+        foreground: 'var(--color-foreground)',
+        muted: 'var(--color-muted)',
+        border: 'var(--color-border)',
       },
       fontFamily: {
         'space-grotesk': ['var(--font-space-grotesk)', 'sans-serif'],
