@@ -68,13 +68,16 @@ export const metadata: Metadata = {
       'Premium direct-response creative agency. We craft campaigns that drive real results and genuine engagement for ambitious brands.',
     images: ['https://raxelmedia.com/og-image.png'],
   },
+  /* Update your metadata object sections down here */
   icons: {
-    icon: '/favicon.ico',
-    shortcut: '/favicon-16x16.png',
-    apple: '/apple-touch-icon.png',
-  },
-  manifest: '/site.webmanifest',
+    icon: [
+      { url: '/favicon.svg', type: 'image/svg+xml' }
+    ],
+    shortcut: '/favicon.svg',
+    apple: '/favicon.svg',
+  }
 };
+// Remove or comment out 'manifest: "./favicon.svg",' unless you have a real manifest.json;
 
 export const viewport: Viewport = {
   width: 'device-width',
