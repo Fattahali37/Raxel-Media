@@ -153,7 +153,10 @@ export function Hero() {
               variants={item}
               className="flex flex-col sm:flex-row gap-4 pt-2"
             >
-              <motion.button
+              <motion.a
+                href="https://calendly.com/raxelmedia/1-1-meeting"
+                target="_blank"
+                rel="noopener noreferrer"
                 whileHover={{
                   scale: 1.02,
                   boxShadow: '0 0 30px rgba(15, 191, 106, 0.3)',
@@ -163,11 +166,11 @@ export function Hero() {
                 className={cn(
                   'w-full sm:w-auto px-8 py-4 rounded-full font-bold font-space-grotesk transition-colors duration-200',
                   'bg-primary hover:bg-primary/90 text-background border border-primary/20',
-                  'text-base sm:text-lg'
+                  'text-base sm:text-lg inline-flex items-center justify-center text-center'
                 )}
               >
                 Book Your Strategy Call
-              </motion.button>
+              </motion.a>
             </motion.div>
           </motion.div>
 

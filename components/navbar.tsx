@@ -102,9 +102,12 @@ export function Navbar() {
 
             {/* Fixed CTA Button: Green background, dark text, clean borders */}
             <motion.div className="hidden lg:block shrink-0" layout="position">
-              <motion.button
+              <motion.a
+                href="https://calendly.com/raxelmedia/1-1-meeting"
+                target="_blank"
+                rel="noopener noreferrer"
                 className={cn(
-                  'font-inter font-semibold tracking-wide rounded-full uppercase transition-all relative overflow-hidden',
+                  'font-inter font-semibold tracking-wide rounded-full uppercase transition-all relative overflow-hidden inline-flex items-center justify-center text-center',
                   'bg-[#0FBF6A] text-black border border-transparent shadow-[0_4px_14px_rgba(15,191,106,0.3)]',
                   isShrunk ? 'px-5 py-1.5 text-[11px]' : 'px-6 py-2 text-xs'
                 )}
@@ -116,7 +119,7 @@ export function Navbar() {
                 whileTap={{ scale: 0.97 }}
               >
                 Let&apos;s Talk Business
-              </motion.button>
+              </motion.a>
             </motion.div>
 
             <div className="lg:hidden flex items-center shrink-0">
@@ -161,13 +164,16 @@ export function Navbar() {
               ))}
             </ul>
 
-            <motion.button
-              className="px-8 py-3 bg-[#0FBF6A] text-black font-inter font-semibold rounded-full text-sm uppercase tracking-wider shadow-[0_4px_14px_rgba(15,191,106,0.3)]"
+            <motion.a
+              href="https://calendly.com/raxelmedia/1-1-meeting"
+              target="_blank"
+              rel="noopener noreferrer"
+              className="px-8 py-3 bg-[#0FBF6A] text-black font-inter font-semibold rounded-full text-sm uppercase tracking-wider shadow-[0_4px_14px_rgba(15,191,106,0.3)] inline-flex items-center justify-center text-center"
               whileTap={{ scale: 0.95 }}
               onClick={() => setMobileMenuOpen(false)}
             >
               Let&apos;s Talk Business
-            </motion.button>
+            </motion.a>
           </motion.div>
         )}
       </AnimatePresence>

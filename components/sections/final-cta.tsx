@@ -18,8 +18,7 @@ export function FinalCTA() {
   const sectionRef = useRef<HTMLElement>(null);
   const contentRef = useRef<HTMLDivElement>(null);
   const headlineRef = useRef<HTMLHeadingElement>(null);
-  const buttonRef = useRef<HTMLButtonElement>(null);
-
+  const buttonRef = useRef<HTMLAnchorElement>(null);
   // GSAP animations
   useEffect(() => {
     if (!sectionRef.current || !headlineRef.current) return;
@@ -115,10 +114,13 @@ export function FinalCTA() {
 
         {/* CTA Button */}
         <div data-animate className="pt-6">
-          <motion.button
+          <motion.a
+            href="https://calendly.com/raxelmedia/1-1-meeting"
+            target="_blank"
+            rel="noopener noreferrer"
             ref={buttonRef}
-            whileHover={{ 
-              scale: 1.04, 
+            whileHover={{
+              scale: 1.04,
               boxShadow: '0 0 50px rgba(15, 191, 106, 0.5)',
               backgroundColor: '#12d177'
             }}
@@ -129,7 +131,8 @@ export function FinalCTA() {
               'bg-primary text-background border border-primary/20',
               'text-lg',
               'relative overflow-hidden',
-              'transition-colors duration-300'
+              'transition-colors duration-300',
+              'inline-flex items-center justify-center text-center'
             )}
           >
             {/* Animated pulse glow */}
@@ -151,7 +154,7 @@ export function FinalCTA() {
 
             {/* Button text */}
             <span className="relative z-10">Book Your Free Strategy Call</span>
-          </motion.button>
+          </motion.a>
         </div>
       </div>
 
