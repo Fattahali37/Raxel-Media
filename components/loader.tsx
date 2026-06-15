@@ -4,92 +4,98 @@ import { useEffect, useState } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
 import type { Variants } from 'framer-motion';
 
-const overlayVariants: Variants = {
+interface PageLoaderProps {
+  onComplete?: () => void;
+}
+
+const logoVariants: Variants = {
+  hidden: { opacity: 0, scale: 0.95 },
+  visible: {
+    opacity: 1,
+    scale: 1,
+    transition: { duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+  },
   exit: {
     opacity: 0,
-    transition: {
-      duration: 0.8,
-      ease: [0.76, 0, 0.24, 1],
-    },
+    scale: 1.02,
+    transition: { duration: 0.3, ease: [0.55, 0.055, 0.675, 0.19] },
   },
 };
 
-const letterVariants: Variants = {
-  hidden: {
-    opacity: 0,
-    y: 50,
-  },
-  visible: (i: number) => ({
+const underlineVariants: Variants = {
+  hidden: { width: 0, opacity: 0 },
+  visible: {
+    width: 140, // Perfectly spans beneath the text layout width
     opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.5,
-      delay: i * 0.04,
-      ease: [0.215, 0.61, 0.355, 1],
-    },
-  }),
-  exit: (i: number) => ({
-    opacity: 0,
-    y: -30,
-    transition: {
-      duration: 0.3,
-      delay: i * 0.02,
-      ease: [0.55, 0.055, 0.675, 0.19],
-    },
-  }),
+    transition: { delay: 0.3, duration: 0.5, ease: [0.215, 0.61, 0.355, 1] },
+  },
+  exit: { opacity: 0, transition: { duration: 0.2 } },
 };
 
-/**
- * PageLoader Component
- * Full-screen loader with "RAXEL MEDIA" reveal animation
- * Shows for 1-1.5 seconds on initial page load
- */
-export function PageLoader() {
+export function PageLoader({ onComplete }: PageLoaderProps) {
   const [isVisible, setIsVisible] = useState(true);
 
   useEffect(() => {
-    // Hide loader after 1.5 seconds
+    document.body.style.overflow = 'hidden';
+
     const timer = setTimeout(() => {
       setIsVisible(false);
     }, 1500);
 
-    return () => clearTimeout(timer);
+    return () => {
+      clearTimeout(timer);
+      document.body.style.overflow = 'unset';
+    };
   }, []);
 
-  const text = 'RAXEL MEDIA';
-
   return (
-    <AnimatePresence>
+    <AnimatePresence
+      mode="wait"
+      onExitComplete={() => {
+        if (onComplete) onComplete();
+        document.body.style.overflow = 'unset';
+      }}
+    >
       {isVisible && (
         <motion.div
-          className="fixed inset-0 z-[9999] bg-background flex items-center justify-center"
-          variants={overlayVariants}
-          exit="exit"
+          initial={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.4, ease: 'easeInOut' }}
+          className="fixed inset-0 bg-[#030303] flex flex-col items-center justify-center gap-5"
+          style={{ zIndex: 999999 }}
         >
-          {/* Logo Text */}
-          <div className="flex gap-1">
-            {text.split('').map((letter, i) => (
-              <motion.span
-                key={i}
-                custom={i}
-                variants={letterVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                className="font-space-grotesk font-bold text-5xl sm:text-6xl text-foreground tracking-tight"
-              >
-                {letter === ' ' ? '\u00A0' : letter}
-              </motion.span>
-            ))}
-          </div>
-
-          {/* Animated underline */}
+          {/* Native HTML Brand Text — Aligns flawlessly to Flex Centering */}
           <motion.div
-            className="absolute bottom-1/3 left-1/2 transform -translate-x-1/2 h-1 bg-primary rounded-full"
-            initial={{ width: 0, opacity: 0 }}
-            animate={{ width: 120, opacity: 1 }}
-            exit={{ opacity: 0 }}
-            transition={{ delay: 0.5, duration: 0.6 }}
+            variants={logoVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+            className="flex items-baseline justify-center select-none tracking-normal"
+          >
+            {/* RAXEL */}
+            <span
+              className="text-white text-4xl sm:text-5xl font-extrabold font-sans"
+              style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}
+            >
+              RAXEL
+            </span>
+
+            {/* MEDIA */}
+            <span
+              className="text-[#0fbf6a] text-xl sm:text-2xl font-bold ml-1.5 font-sans"
+              style={{ fontFamily: "system-ui, -apple-system, 'Segoe UI', Roboto, sans-serif" }}
+            >
+              MEDIA
+            </span>
+          </motion.div>
+
+          {/* Underline Progress Indicator Bar (Now sharing the exact horizontal grid center) */}
+          <motion.div
+            className="h-[3px] bg-[#0fbf6a] rounded-full"
+            variants={underlineVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
           />
         </motion.div>
       )}

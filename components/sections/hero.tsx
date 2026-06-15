@@ -188,7 +188,10 @@ export function Hero() {
                 <BarChart3 className="w-3.5 h-3.5 sm:w-4 sm:h-4 text-primary drop-shadow-[0_0_4px_#0fbf6a]" />
               </div>
               <div className="space-y-0.5">
-                <p className="text-[8px] sm:text-[9px] font-mono tracking-widest text-muted font-bold uppercase">// SCALE_VELOCITY</p>
+                {/* Cleaned: String literal slash tokens safely bracketed */}
+                <p className="text-[8px] sm:text-[9px] font-mono tracking-widest text-muted font-bold uppercase">
+                  {"// SCALE_VELOCITY"}
+                </p>
                 <p className="text-sm sm:text-base font-bold font-space-grotesk text-foreground leading-tight">3.4x Avg ROAS</p>
               </div>
             </motion.div>
@@ -240,7 +243,10 @@ export function Hero() {
               }}
             >
               <div className="flex items-center justify-between">
-                <span className="text-[8px] sm:text-[9px] font-mono font-bold tracking-widest text-muted uppercase">// EFFICIENCY_INDEX</span>
+                {/* Cleaned: String literal slash tokens safely bracketed */}
+                <span className="text-[8px] sm:text-[9px] font-mono font-bold tracking-widest text-muted uppercase">
+                  {"// EFFICIENCY_INDEX"}
+                </span>
                 <div className="w-5 h-5 sm:w-6 sm:h-6 rounded-md bg-emerald-500/10 flex items-center justify-center border border-emerald-500/20">
                   <ArrowDownRight className="w-3 sm:w-3.5 h-3 sm:h-3.5 text-primary drop-shadow-[0_0_4px_#0fbf6a]" />
                 </div>

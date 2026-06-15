@@ -112,7 +112,7 @@ function MethodCard({ step, isActive }: MethodCardProps) {
                 "text-[10px] font-mono tracking-wider transition-opacity duration-500",
                 isActive ? "text-primary opacity-100" : "text-muted opacity-0"
               )}>
-                // ACTIVE_PHASE
+                {"// ACTIVE_PHASE"}
               </span>
             </div>
 

@@ -58,7 +58,7 @@ export function Footer() {
                 Navigate
               </h4>
               <nav className="space-y-3">
-                {['Home', 'Services', 'Work', 'Process', 'FAQ'].map((link) => (
+                {['Home', 'Services', 'Process', 'FAQ'].map((link) => (
                   <a
                     key={link}
                     href={`#${link.toLowerCase()}`}
@@ -116,7 +116,7 @@ export function Footer() {
                   href="mailto:hello@raxelmedia.com"
                   className="text-sm text-muted hover:text-primary transition-colors duration-300 block"
                 >
-                  hello@raxelmedia.com
+                  info@raxelmedia.com
                 </a>
                 <a
                   href="#book"

@@ -61,14 +61,14 @@ export function WhyRaxel() {
     mm.add("(min-width: 768px)", () => {
       const track = scrollTrackRef.current!;
       const container = containerTriggerRef.current!;
-      
+
       const updateTimeline = () => {
         const totalWidth = track.scrollWidth;
         const windowWidth = window.innerWidth;
-        
+
         // Exact dynamic distance to move the track completely left
         const xTranslation = -(totalWidth - windowWidth + 64);
-        
+
         // SCROLL PACE MULTIPLIER: Allocates enough vertical scroll distance to let the pacing feel smooth
         const scrollPacingFactor = 1.5;
         const scrollDistance = Math.abs(xTranslation) * scrollPacingFactor;
@@ -79,7 +79,7 @@ export function WhyRaxel() {
         });
 
         // 1. Core Card Glide Tween
-        gsap.fromTo(track, 
+        gsap.fromTo(track,
           { x: 0 },
           {
             x: xTranslation,
@@ -128,14 +128,14 @@ export function WhyRaxel() {
   }, []);
 
   return (
-    <section 
-      ref={containerTriggerRef} 
+    <section
+      ref={containerTriggerRef}
       className="w-full h-auto md:h-screen bg-background overflow-x-hidden md:overflow-hidden flex flex-col justify-center relative py-20 md:py-0 select-none border-b border-border/30"
     >
       {/* Background Editor Pixel Ambient Grid */}
-      <div 
-        className="absolute inset-0 opacity-[0.015] pointer-events-none" 
-        style={{ backgroundImage: 'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)', backgroundSize: '50px 50px' }} 
+      <div
+        className="absolute inset-0 opacity-[0.015] pointer-events-none"
+        style={{ backgroundImage: 'linear-gradient(to right, #fff 1px, transparent 1px), linear-gradient(to bottom, #fff 1px, transparent 1px)', backgroundSize: '50px 50px' }}
       />
 
       {/* Visual Editor Anchor Header Frame */}
@@ -149,16 +149,16 @@ export function WhyRaxel() {
           </h2>
         </div>
         <p className="text-xs font-mono max-w-xs md:text-right uppercase tracking-wider" style={{ color: '#3a3a3a' }}>
-          // [SCROLL_TIMELINE] ACCELERATING CONVERSION ARCS
+          {"// [SCROLL_TIMELINE] ACCELERATING CONVERSION ARCS"}
         </p>
       </div>
 
       {/* Horizontal Strip Container view wrapper */}
       <div className="w-full relative flex items-center overflow-x-auto md:overflow-x-visible pb-6 md:pb-0 scrollbar-none snap-x snap-mandatory md:snap-none px-4 md:px-0">
-        
+
         {/* Moving filmstrip runway track */}
-        <div 
-          ref={scrollTrackRef} 
+        <div
+          ref={scrollTrackRef}
           className="flex gap-5 md:gap-6 pl-0 md:pl-[max(2rem,calc((100vw-80rem)/2))] pr-4 md:pr-[10vw] will-change-transform"
         >
           {FEATURES.map((feature) => {
@@ -177,8 +177,7 @@ export function WhyRaxel() {
                     </span>
                   </div>
                   <span className="text-xs font-mono text-white/15 group-hover:text-primary/40 transition-colors duration-500">
-                    //_{feature.number}
-                  </span>
+                    {`//_${feature.number}`}                  </span>
                 </div>
 
                 {/* Primary Narrative Context Copy */}
@@ -208,9 +207,9 @@ export function WhyRaxel() {
       {/* Embedded Render Progress Status Track Bar (Only visible Desktop viewports) */}
       <div className="absolute bottom-10 left-1/2 -translate-x-1/2 w-full max-w-7xl px-4 sm:px-6 lg:px-8 hidden md:block pointer-events-none">
         <div className="w-full h-[2px] bg-white/[0.03] rounded-full relative overflow-hidden">
-          <div 
-            ref={progressBarRef} 
-            className="absolute left-0 top-0 bottom-0 w-full bg-gradient-to-r from-primary/30 to-primary origin-left will-change-transform shadow-[0_0_10px_#0fbf6a]" 
+          <div
+            ref={progressBarRef}
+            className="absolute left-0 top-0 bottom-0 w-full bg-gradient-to-r from-primary/30 to-primary origin-left will-change-transform shadow-[0_0_10px_#0fbf6a]"
           />
         </div>
       </div>

@@ -4,7 +4,7 @@ import { useState, useEffect, useRef } from 'react';
 import { motion, useScroll, AnimatePresence } from 'framer-motion';
 import { Menu, X } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Logo } from '@/components/logo';
+import { Logo } from './logo';
 
 interface NavLink {
   href: string;
@@ -14,7 +14,7 @@ interface NavLink {
 export function Navbar() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const [isShrunk, setIsShrunk] = useState(false);
-  
+
   const { scrollY } = useScroll();
   const lastScrollY = useRef(0);
 
@@ -69,7 +69,7 @@ export function Navbar() {
             'flex items-center justify-between w-full transition-all duration-300',
             isShrunk ? 'px-4 py-1.5 gap-6' : 'px-6 py-2.5 gap-8'
           )}>
-            
+
             <motion.div className="flex items-center shrink-0 cursor-pointer text-white" layout="position">
               <a href="/" className="font-bold text-foreground font-space-grotesk block transform scale-95 origin-left">
                 <Logo />
